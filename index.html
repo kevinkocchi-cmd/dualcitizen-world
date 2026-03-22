@@ -120,21 +120,21 @@
 
 <div id="top-bar" style="width:0%"></div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WELCOME â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ WELCOME ═══════════════════════════════════════════ -->
 <div id="screen-welcome" class="screen active" style="background:linear-gradient(160deg,#0F172A 0%,#1E1B4B 50%,#3B0764 100%);">
   <div class="flex flex-col items-center justify-center flex-1 px-6 py-16 text-center">
     <div class="anim-fadeup">
-      <div class="text-6xl mb-6">ðŸŒ</div>
+      <div class="text-6xl mb-6">🌍</div>
       <h1 class="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">
         Find Your Path to<br/>
         <span style="background:linear-gradient(90deg,#A5B4FC,#C4B5FD);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Dual Citizenship</span>
       </h1>
       <p class="text-indigo-200 text-lg max-w-md mx-auto mb-3 leading-relaxed">
-        Answer 6 quick questions and get a <strong class="text-white">personalized action plan</strong> â€” ranked easiest first, with real steps to start today.
+        Answer 6 quick questions and get a <strong class="text-white">personalized action plan</strong> — ranked easiest first, with real steps to start today.
       </p>
       <p class="text-indigo-300 text-sm mb-8">Includes a downloadable PDF with your top 10 paths, documents checklist, and pre-filled application starter.</p>
-      <button class="btn-primary text-lg px-12 py-5" onclick="startQuiz()">Find My Path â†’</button>
-      <p class="text-indigo-400 text-sm mt-4">2 minutes &nbsp;Â·&nbsp; Free &nbsp;Â·&nbsp; No signup required</p>
+      <button class="btn-primary text-lg px-12 py-5" onclick="startQuiz()">Find My Path →</button>
+      <p class="text-indigo-400 text-sm mt-4">2 minutes &nbsp;·&nbsp; Free &nbsp;·&nbsp; No signup required</p>
     </div>
     <div class="anim-fadeup mt-14 grid grid-cols-3 gap-6 max-w-xs w-full" style="animation-delay:.25s">
       <div class="text-center"><div class="text-3xl font-black text-white">29</div><div class="text-indigo-300 text-xs mt-1">Paths covered</div></div>
@@ -144,7 +144,7 @@
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• QUIZ â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ QUIZ ══════════════════════════════════════════════ -->
 <div id="screen-quiz" class="screen" style="background:#F8FAFC;">
   <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
     <div class="max-w-2xl mx-auto px-5 py-3.5 flex items-center gap-4">
@@ -166,22 +166,22 @@
   <div class="bg-white border-t border-gray-100 sticky bottom-0">
     <div class="max-w-2xl mx-auto px-5 py-3.5 flex justify-between items-center">
       <span id="q-hint" class="text-xs text-gray-400"></span>
-      <button onclick="nextQuestion()" id="btn-next" class="btn-primary px-7 py-2.5 text-sm">Continue â†’</button>
+      <button onclick="nextQuestion()" id="btn-next" class="btn-primary px-7 py-2.5 text-sm">Continue →</button>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• LOADING â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ LOADING ══════════════════════════════════════════ -->
 <div id="screen-loading" class="screen" style="background:linear-gradient(160deg,#0F172A,#1E1B4B);">
   <div class="flex flex-col items-center justify-center flex-1 gap-7 text-center px-6">
-    <div class="text-5xl">ðŸ”</div>
-    <h2 class="text-2xl font-bold text-white">Analyzing your profileâ€¦</h2>
+    <div class="text-5xl">🔍</div>
+    <h2 class="text-2xl font-bold text-white">Analyzing your profile…</h2>
     <div class="flex gap-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-    <p id="loading-msg" class="text-indigo-200 text-sm max-w-xs">Checking programs in 195 countriesâ€¦</p>
+    <p id="loading-msg" class="text-indigo-200 text-sm max-w-xs">Checking programs in 195 countries…</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• RESULTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ RESULTS ═════════════════════════════════════════ -->
 <div id="screen-results" class="screen flex-col" style="background:#F8FAFC;">
   <div style="background:linear-gradient(135deg,#0F172A,#3B0764);" class="text-white px-6 py-9">
     <div class="max-w-3xl mx-auto">
@@ -190,7 +190,7 @@
       <p class="text-purple-200 text-sm mb-6" id="results-subline">Ranked easiest to hardest based on your answers</p>
       <button onclick="goToIntake()" class="btn-green">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Get Started â€” Enter Info for My Top 10
+        Get Started — Enter Info for My Top 10
       </button>
       <p class="text-purple-400 text-xs mt-2">We'll walk you through what's needed for each of your best matches</p>
     </div>
@@ -199,14 +199,14 @@
   <!-- Start Here -->
   <div style="background:#FFF7ED;border-bottom:2px solid #FED7AA;" class="px-6 py-5">
     <div class="max-w-3xl mx-auto">
-      <p class="text-orange-700 font-black text-base mb-1">ðŸ“‹ Start Here â€” Do These Today (No Research Needed Yet)</p>
+      <p class="text-orange-700 font-black text-base mb-1">📋 Start Here — Do These Today (No Research Needed Yet)</p>
       <p class="text-orange-600 text-sm mb-3">These 5 steps apply to <em>every</em> citizenship path. Start now, regardless of which country you choose.</p>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">ðŸ“„</div><p class="text-xs font-bold text-gray-700">Order your birth certificate</p><p class="text-xs text-gray-400 mt-0.5">VitalChek.com</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">ðŸ›‚</div><p class="text-xs font-bold text-gray-700">Get/renew US passport</p><p class="text-xs text-gray-400 mt-0.5">travel.state.gov</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">ðŸŒ³</div><p class="text-xs font-bold text-gray-700">Start a family tree</p><p class="text-xs text-gray-400 mt-0.5">FamilySearch.org (free)</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">ðŸŽ™ï¸</div><p class="text-xs font-bold text-gray-700">Interview older relatives</p><p class="text-xs text-gray-400 mt-0.5">Ask about birthplaces</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">ðŸ“‚</div><p class="text-xs font-bold text-gray-700">Create a document folder</p><p class="text-xs text-gray-400 mt-0.5">Google Drive or binder</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">📄</div><p class="text-xs font-bold text-gray-700">Order your birth certificate</p><p class="text-xs text-gray-400 mt-0.5">VitalChek.com</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🛂</div><p class="text-xs font-bold text-gray-700">Get/renew US passport</p><p class="text-xs text-gray-400 mt-0.5">travel.state.gov</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🌳</div><p class="text-xs font-bold text-gray-700">Start a family tree</p><p class="text-xs text-gray-400 mt-0.5">FamilySearch.org (free)</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🎙️</div><p class="text-xs font-bold text-gray-700">Interview older relatives</p><p class="text-xs text-gray-400 mt-0.5">Ask about birthplaces</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">📂</div><p class="text-xs font-bold text-gray-700">Create a document folder</p><p class="text-xs text-gray-400 mt-0.5">Google Drive or binder</p></div>
       </div>
     </div>
   </div>
@@ -216,10 +216,10 @@
     <div class="max-w-3xl mx-auto px-5 py-3 flex items-center gap-2 overflow-x-auto">
       <span class="text-xs font-bold text-gray-400 mr-1 whitespace-nowrap">Filter:</span>
       <button class="filter-pill active" onclick="filterResults('all',this)">All Paths</button>
-      <button class="filter-pill" onclick="filterResults('ancestry',this)">By Ancestry ðŸ§¬</button>
-      <button class="filter-pill" onclick="filterResults('residency',this)">By Residency ðŸ </button>
-      <button class="filter-pill" onclick="filterResults('investment',this)">By Investment ðŸ’°</button>
-      <button class="filter-pill" onclick="filterResults('top',this)">Best Matches â­</button>
+      <button class="filter-pill" onclick="filterResults('ancestry',this)">By Ancestry 🧬</button>
+      <button class="filter-pill" onclick="filterResults('residency',this)">By Residency 🏠</button>
+      <button class="filter-pill" onclick="filterResults('investment',this)">By Investment 💰</button>
+      <button class="filter-pill" onclick="filterResults('top',this)">Best Matches ⭐</button>
     </div>
   </div>
 
@@ -228,18 +228,18 @@
     <div class="text-center mt-10 flex flex-wrap gap-3 justify-center">
       <button onclick="goToIntake()" class="btn-green">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Get Started â€” Top 10 Paths
+        Get Started — Top 10 Paths
       </button>
       <button onclick="showScreen('screen-welcome')" class="btn-secondary">Start Over</button>
     </div>
     <p class="text-center text-xs text-gray-400 mt-6 max-w-lg mx-auto leading-relaxed">
-      <strong>Disclaimer:</strong> General information only â€” not legal advice. Immigration laws change frequently.
+      <strong>Disclaimer:</strong> General information only — not legal advice. Immigration laws change frequently.
       Always consult a licensed immigration attorney before taking action.
     </p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• INTAKE (NEW) â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ INTAKE (NEW) ════════════════════════════════════ -->
 <div id="screen-intake" class="screen flex-col" style="background:#F8FAFC;">
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#059669,#0D9488);" class="text-white px-6 py-8">
@@ -251,7 +251,7 @@
       <p class="text-green-200 text-xs font-bold uppercase tracking-widest mb-2">Step: Get Started</p>
       <h2 class="text-3xl font-black mb-2">Your Top 10 Paths</h2>
       <p class="text-green-100 text-sm leading-relaxed max-w-xl">
-        Fill in what you know for each country below â€” even partial info helps.
+        Fill in what you know for each country below — even partial info helps.
         All fields are optional. The more you enter, the more personalized your action plan PDF will be.
       </p>
     </div>
@@ -262,10 +262,10 @@
     <!-- Personal Info Card -->
     <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
       <div class="flex items-center gap-3 mb-5">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-black" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">ðŸ‘¤</div>
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-black" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">👤</div>
         <div>
           <h3 class="font-black text-gray-900 text-lg">Your Personal Information</h3>
-          <p class="text-gray-400 text-xs">Used to personalize your action plan â€” all optional</p>
+          <p class="text-gray-400 text-xs">Used to personalize your action plan — all optional</p>
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -315,7 +315,7 @@
     </div>
 
     <p class="text-center text-xs text-gray-400 mt-5 max-w-lg mx-auto leading-relaxed">
-      <strong>Disclaimer:</strong> General information only â€” not legal advice. Always verify current requirements and consult a licensed immigration attorney before taking action.
+      <strong>Disclaimer:</strong> General information only — not legal advice. Always verify current requirements and consult a licensed immigration attorney before taking action.
     </p>
   </div>
 </div>
