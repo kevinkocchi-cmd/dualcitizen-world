@@ -478,7 +478,8 @@ function requestResearchPDF(){
   if(!relNotes||relNotes.trim().length<10){generatePDF();return;}
   var overlay=document.getElementById('research-overlay');
   if(overlay)overlay.style.display='flex';
-  window.__pdfRequest={relatives:relNotes,name:nm,ancestry:(__state.answers&&__state.answers[0])||[],requestedAt:new Date().toISOString()};
+  if(window.__state)window.__state.relativeNotes=relNotes;
+window.__pdfRequest={relatives:relNotes,name:nm,ancestry:(__state.answers&&__state.answers[0])||[],requestedAt:new Date().toISOString()};
   var polls=0;
   var timer=setInterval(function(){
     polls++;
@@ -542,6 +543,83 @@ function applyResearchRanking(results){
   });
 }
 
+function getAncestorProfileText(path,relNotes,rr,result){
+var pn=(path.name||'').toLowerCase();
+var pid=(path.id||'').toLowerCase();
+var notes=(relNotes||'').toLowerCase();
+var resLinks=rr&&rr.links?rr.links:[];
+function extractLine(keywords){
+  var lines=(relNotes||'').replace(/\n/g,'. ').split(/[.!]/);
+  for(var i=0;i<lines.length;i++){
+    var l=lines[i].toLowerCase();
+    for(var j=0;j<keywords.length;j++){if(l.indexOf(keywords[j])>-1)return lines[i].trim().substring(0,90);}
+  }
+  return '';
+}
+// ITALIAN
+if(pn.indexOf('italian')>-1||pid.indexOf('italy')>-1){
+  var hit=notes.indexOf('sicil')>-1||notes.indexOf('italy')>-1||notes.indexOf('italian')>-1||notes.indexOf('kocchi')>-1;
+  if(hit){
+    var anc=extractLine(['sicil','kocchi','italy','italian'])||'Italian ancestor identified in your family notes';
+    return {title:'ITALIAN ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc,
+    lines:['ARCHIVE: Antenati Portal (FREE) - antenati.cultura.gov.it - 71M+ Sicilian records from 1820',
+    'ARRIVAL: Search Ellis Island - libertyellisfoundation.org - try surname spelling variants (Cocchi, Cochi)',
+    'NATURALIZATION: 1920 US Census lists year naturalized - search free at FamilySearch.org/1920census',
+    'NARA RECORDS: Request naturalization docs at archives.gov/research/immigration/naturalization',
+    'COMUNE: Once Sicilian town confirmed, email Ufficio Anagrafe for certified birth certificate'],
+    note:'CRITICAL: Ancestor must have naturalized AFTER your parent was born - this determines eligibility'};
+  }
+}
+// IRISH
+if(pn.indexOf('irish')>-1||pid.indexOf('ireland')>-1){
+  var hit2=notes.indexOf('ireland')>-1||notes.indexOf('irish')>-1||notes.indexOf("o'brien")>-1||notes.indexOf('obrien')>-1||notes.indexOf('cork')>-1;
+  if(hit2){
+    var anc2=extractLine(['ireland','irish',"o'brien",'obrien','cork'])||'Irish ancestor identified in your family notes';
+    return {title:'IRISH ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc2,
+    lines:['ARCHIVE: IrishGenealogy.ie (FREE) - civil births 1864-1924, deaths 1878-1969 - search by surname + county',
+    'CORK RECORDS: Cork City & County Archives (corkarchives.ie) - additional family history collections',
+    'CATHOLIC RECORDS: Diocese of Cork & Ross church records to 1880 available at irishgenealogy.ie',
+    'APPLICATION: Foreign Births Register at fbr.dfa.ie - current wait approximately 9 months',
+    'DOCUMENTS NEEDED: Irish ancestor birth cert + marriage cert + your parent birth cert + your birth cert'],
+    note:null};
+  }
+}
+// BRITISH
+if(pn.indexOf('british')>-1||pid.indexOf('ancestry_uk')>-1){
+  var hit3=notes.indexOf('pitman')>-1||notes.indexOf('nova scotia')>-1||notes.indexOf('canada')>-1||notes.indexOf('british')>-1||notes.indexOf('england')>-1;
+  if(hit3){
+    var anc3=extractLine(['pitman','nova scotia','canada','british','england'])||'British/Canadian ancestor identified in your family notes';
+    return {title:'BRITISH ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc3,
+    lines:['CANADA RECORDS: Library and Archives Canada (bac-lac.gc.ca) - NS census and immigration records FREE',
+    'NOVA SCOTIA VITAL STATS: novascotia.ca/sns/access/birth-death-marriage - civil records from 1864',
+    'UK ORIGINS: Trace Pitman line to UK via FamilySearch.org NS census - look for UK birthplace in census',
+    'GRO UK: Once UK birth confirmed, order cert at gro.gov.uk/gro/content/certificates',
+    'APPLICATION: gov.uk/apply-citizenship-british-parent - requires proof of UK-born parent or grandparent'],
+    note:'NOTE: Must confirm UK-born grandparent - Nova Scotia Pitman line needs tracing back to confirm UK birth'};
+  }
+}
+// GERMAN
+if(pn.indexOf('german')>-1||pid.indexOf('germany')>-1){
+  var hit4=notes.indexOf('german')>-1||notes.indexOf('germany')>-1||notes.indexOf('bavaria')>-1||notes.indexOf('deutsch')>-1;
+  if(hit4){
+    var anc4=extractLine(['german','germany','bavaria','deutsch'])||'German ancestor identified in your family notes';
+    return {title:'GERMAN ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc4,
+    lines:['EMIGRATION DB: Deutsche Auswanderer-Datenbank at bba.de - millions of German emigrant records',
+    'CHURCH RECORDS: Archion.de and Matricula-online.eu - digitized German parish records (Kirchenbuecher)',
+    'CIVIL RECORDS: Contact Standesamt (registry office) in ancestral town for Geburts/Heirats/Sterbeurkunden',
+    'APPLICATION: German Federal Administration Office (BVA) - bva.bund.de for citizenship restoration',
+    'NAZI PERSECUTION ROUTE: If ancestors lost citizenship 1933-1945, fast-track route available via Art.116 GG'],
+    note:null};
+  }
+}
+// Generic research confirmed
+if(result&&result.researchConfirmed&&resLinks.length>0){
+  var genLines=[];
+  resLinks.slice(0,4).forEach(function(lnk){if(lnk.title&&lnk.url)genLines.push(lnk.title.substring(0,60)+' - '+lnk.url.substring(0,50));});
+  if(genLines.length>0)return {title:'ANCESTRY RESEARCH FINDINGS FOR THIS PATH',ancestor:'',lines:genLines,note:null};
+}
+return null;
+}
 function generatePDF(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
 var PW=210,PH=297,M=14,CW=182;
@@ -736,6 +814,26 @@ qs.forEach(function(q,qi){
 });
 y+=21;
 if(p.summary){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);y=wt(p.summary,M,y,CW,4.5);y+=4;}
+
+// Ancestor Research Profile Box
+var _relNotes=(window.__state&&window.__state.relativeNotes)||(document.getElementById('p-relatives')?document.getElementById('p-relatives').value:'')||'';
+var _rr=window.__relativeResearch||null;
+var _aProf=getAncestorProfileText(p,_relNotes,_rr,r);
+if(_aProf&&_aProf.lines&&_aProf.lines.length){
+  var _boxH=10+(_aProf.ancestor?5.5:0)+_aProf.lines.length*4.8+(_aProf.note?5.5:0)+2;
+  y=chk(y,_boxH+8);
+  doc.setFillColor(255,251,235);doc.setDrawColor(217,119,6);doc.rect(M,y,CW,_boxH,'FD');
+  doc.setFillColor(217,119,6);doc.rect(M,y,3,_boxH,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(146,64,14);
+  doc.text(cl(_aProf.title||'YOUR ANCESTOR RESEARCH'),M+6,y+5.5);
+  var _ly=y+10;
+  if(_aProf.ancestor){doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(120,53,15);doc.text(cl(_aProf.ancestor),M+6,_ly);_ly+=5.5;}
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(92,45,6);
+  _aProf.lines.forEach(function(_ln){doc.text(cl('- '+_ln),M+6,_ly);_ly+=4.8;});
+  if(_aProf.note){doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(185,28,28);doc.text(cl(_aProf.note),M+6,_ly+1);}
+  y+=_boxH+5;
+}
+
 // Steps
 y=chk(y,22);doc.setFillColor(r.researchConfirmed?5:109,r.researchConfirmed?120:40,r.researchConfirmed?87:217);doc.rect(M,y,CW,7,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('STEP-BY-STEP ACTION PLAN',M+3,y+5);y+=9;
