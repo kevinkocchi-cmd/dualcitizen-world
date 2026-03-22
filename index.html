@@ -120,21 +120,21 @@
 
 <div id="top-bar" style="width:0%"></div>
 
-<!-- ═══════════════════ WELCOME ═══════════════════════════════════════════ -->
+<!--  WELCOME  -->
 <div id="screen-welcome" class="screen active" style="background:linear-gradient(160deg,#0F172A 0%,#1E1B4B 50%,#3B0764 100%);">
   <div class="flex flex-col items-center justify-center flex-1 px-6 py-16 text-center">
     <div class="anim-fadeup">
-      <div class="text-6xl mb-6">🌍</div>
+      <div class="text-6xl mb-6"></div>
       <h1 class="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">
         Find Your Path to<br/>
         <span style="background:linear-gradient(90deg,#A5B4FC,#C4B5FD);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Dual Citizenship</span>
       </h1>
       <p class="text-indigo-200 text-lg max-w-md mx-auto mb-3 leading-relaxed">
-        Answer 6 quick questions and get a <strong class="text-white">personalized action plan</strong> — ranked easiest first, with real steps to start today.
+        Answer 6 quick questions and get a <strong class="text-white">personalized action plan</strong>  ranked easiest first, with real steps to start today.
       </p>
       <p class="text-indigo-300 text-sm mb-8">Includes a downloadable PDF with your top 10 paths, documents checklist, and pre-filled application starter.</p>
-      <button class="btn-primary text-lg px-12 py-5" onclick="startQuiz()">Find My Path →</button>
-      <p class="text-indigo-400 text-sm mt-4">2 minutes &nbsp;·&nbsp; Free &nbsp;·&nbsp; No signup required</p>
+      <button class="btn-primary text-lg px-12 py-5" onclick="startQuiz()">Find My Path </button>
+      <p class="text-indigo-400 text-sm mt-4">2 minutes &nbsp;&nbsp; Free &nbsp;&nbsp; No signup required</p>
     </div>
     <div class="anim-fadeup mt-14 grid grid-cols-3 gap-6 max-w-xs w-full" style="animation-delay:.25s">
       <div class="text-center"><div class="text-3xl font-black text-white">29</div><div class="text-indigo-300 text-xs mt-1">Paths covered</div></div>
@@ -144,7 +144,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════ QUIZ ══════════════════════════════════════════════ -->
+<!--  QUIZ  -->
 <div id="screen-quiz" class="screen" style="background:#F8FAFC;">
   <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
     <div class="max-w-2xl mx-auto px-5 py-3.5 flex items-center gap-4">
@@ -166,22 +166,22 @@
   <div class="bg-white border-t border-gray-100 sticky bottom-0">
     <div class="max-w-2xl mx-auto px-5 py-3.5 flex justify-between items-center">
       <span id="q-hint" class="text-xs text-gray-400"></span>
-      <button onclick="nextQuestion()" id="btn-next" class="btn-primary px-7 py-2.5 text-sm">Continue →</button>
+      <button onclick="nextQuestion()" id="btn-next" class="btn-primary px-7 py-2.5 text-sm">Continue </button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════ LOADING ══════════════════════════════════════════ -->
+<!--  LOADING  -->
 <div id="screen-loading" class="screen" style="background:linear-gradient(160deg,#0F172A,#1E1B4B);">
   <div class="flex flex-col items-center justify-center flex-1 gap-7 text-center px-6">
-    <div class="text-5xl">🔍</div>
-    <h2 class="text-2xl font-bold text-white">Analyzing your profile…</h2>
+    <div class="text-5xl"></div>
+    <h2 class="text-2xl font-bold text-white">Analyzing your profile</h2>
     <div class="flex gap-3"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-    <p id="loading-msg" class="text-indigo-200 text-sm max-w-xs">Checking programs in 195 countries…</p>
+    <p id="loading-msg" class="text-indigo-200 text-sm max-w-xs">Checking programs in 195 countries</p>
   </div>
 </div>
 
-<!-- ═══════════════════ RESULTS ═════════════════════════════════════════ -->
+<!--  RESULTS  -->
 <div id="screen-results" class="screen flex-col" style="background:#F8FAFC;">
   <div style="background:linear-gradient(135deg,#0F172A,#3B0764);" class="text-white px-6 py-9">
     <div class="max-w-3xl mx-auto">
@@ -190,7 +190,7 @@
       <p class="text-purple-200 text-sm mb-6" id="results-subline">Ranked easiest to hardest based on your answers</p>
       <button onclick="goToIntake()" class="btn-green">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Get Started — Enter Info for My Top 10
+        Get Started  Enter Info for My Top 10
       </button>
       <p class="text-purple-400 text-xs mt-2">We'll walk you through what's needed for each of your best matches</p>
     </div>
@@ -199,14 +199,14 @@
   <!-- Start Here -->
   <div style="background:#FFF7ED;border-bottom:2px solid #FED7AA;" class="px-6 py-5">
     <div class="max-w-3xl mx-auto">
-      <p class="text-orange-700 font-black text-base mb-1">📋 Start Here — Do These Today (No Research Needed Yet)</p>
+      <p class="text-orange-700 font-black text-base mb-1"> Start Here  Do These Today (No Research Needed Yet)</p>
       <p class="text-orange-600 text-sm mb-3">These 5 steps apply to <em>every</em> citizenship path. Start now, regardless of which country you choose.</p>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">📄</div><p class="text-xs font-bold text-gray-700">Order your birth certificate</p><p class="text-xs text-gray-400 mt-0.5">VitalChek.com</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🛂</div><p class="text-xs font-bold text-gray-700">Get/renew US passport</p><p class="text-xs text-gray-400 mt-0.5">travel.state.gov</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🌳</div><p class="text-xs font-bold text-gray-700">Start a family tree</p><p class="text-xs text-gray-400 mt-0.5">FamilySearch.org (free)</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">🎙️</div><p class="text-xs font-bold text-gray-700">Interview older relatives</p><p class="text-xs text-gray-400 mt-0.5">Ask about birthplaces</p></div>
-        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1">📂</div><p class="text-xs font-bold text-gray-700">Create a document folder</p><p class="text-xs text-gray-400 mt-0.5">Google Drive or binder</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1"></div><p class="text-xs font-bold text-gray-700">Order your birth certificate</p><p class="text-xs text-gray-400 mt-0.5">VitalChek.com</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1"></div><p class="text-xs font-bold text-gray-700">Get/renew US passport</p><p class="text-xs text-gray-400 mt-0.5">travel.state.gov</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1"></div><p class="text-xs font-bold text-gray-700">Start a family tree</p><p class="text-xs text-gray-400 mt-0.5">FamilySearch.org (free)</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1"></div><p class="text-xs font-bold text-gray-700">Interview older relatives</p><p class="text-xs text-gray-400 mt-0.5">Ask about birthplaces</p></div>
+        <div class="bg-white border border-orange-100 rounded-xl p-3 text-center"><div class="text-xl mb-1"></div><p class="text-xs font-bold text-gray-700">Create a document folder</p><p class="text-xs text-gray-400 mt-0.5">Google Drive or binder</p></div>
       </div>
     </div>
   </div>
@@ -216,10 +216,10 @@
     <div class="max-w-3xl mx-auto px-5 py-3 flex items-center gap-2 overflow-x-auto">
       <span class="text-xs font-bold text-gray-400 mr-1 whitespace-nowrap">Filter:</span>
       <button class="filter-pill active" onclick="filterResults('all',this)">All Paths</button>
-      <button class="filter-pill" onclick="filterResults('ancestry',this)">By Ancestry 🧬</button>
-      <button class="filter-pill" onclick="filterResults('residency',this)">By Residency 🏠</button>
-      <button class="filter-pill" onclick="filterResults('investment',this)">By Investment 💰</button>
-      <button class="filter-pill" onclick="filterResults('top',this)">Best Matches ⭐</button>
+      <button class="filter-pill" onclick="filterResults('ancestry',this)">By Ancestry </button>
+      <button class="filter-pill" onclick="filterResults('residency',this)">By Residency </button>
+      <button class="filter-pill" onclick="filterResults('investment',this)">By Investment </button>
+      <button class="filter-pill" onclick="filterResults('top',this)">Best Matches </button>
     </div>
   </div>
 
@@ -228,18 +228,18 @@
     <div class="text-center mt-10 flex flex-wrap gap-3 justify-center">
       <button onclick="goToIntake()" class="btn-green">
         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        Get Started — Top 10 Paths
+        Get Started  Top 10 Paths
       </button>
       <button onclick="showScreen('screen-welcome')" class="btn-secondary">Start Over</button>
     </div>
     <p class="text-center text-xs text-gray-400 mt-6 max-w-lg mx-auto leading-relaxed">
-      <strong>Disclaimer:</strong> General information only — not legal advice. Immigration laws change frequently.
+      <strong>Disclaimer:</strong> General information only  not legal advice. Immigration laws change frequently.
       Always consult a licensed immigration attorney before taking action.
     </p>
   </div>
 </div>
 
-<!-- ═══════════════════ INTAKE (NEW) ════════════════════════════════════ -->
+<!--  INTAKE (NEW)  -->
 <div id="screen-intake" class="screen flex-col" style="background:#F8FAFC;">
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#059669,#0D9488);" class="text-white px-6 py-8">
@@ -251,7 +251,7 @@
       <p class="text-green-200 text-xs font-bold uppercase tracking-widest mb-2">Step: Get Started</p>
       <h2 class="text-3xl font-black mb-2">Your Top 10 Paths</h2>
       <p class="text-green-100 text-sm leading-relaxed max-w-xl">
-        Fill in what you know for each country below — even partial info helps.
+        Fill in what you know for each country below  even partial info helps.
         All fields are optional. The more you enter, the more personalized your action plan PDF will be.
       </p>
     </div>
@@ -262,10 +262,10 @@
     <!-- Personal Info Card -->
     <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
       <div class="flex items-center gap-3 mb-5">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-black" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);">👤</div>
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-black" style="background:linear-gradient(135deg,#6366F1,#8B5CF6);"></div>
         <div>
           <h3 class="font-black text-gray-900 text-lg">Your Personal Information</h3>
-          <p class="text-gray-400 text-xs">Used to personalize your action plan — all optional</p>
+          <p class="text-gray-400 text-xs">Used to personalize your action plan  all optional</p>
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -315,135 +315,241 @@
     </div>
 
     <p class="text-center text-xs text-gray-400 mt-5 max-w-lg mx-auto leading-relaxed">
-      <strong>Disclaimer:</strong> General information only — not legal advice. Always verify current requirements and consult a licensed immigration attorney before taking action.
+      <strong>Disclaimer:</strong> General information only  not legal advice. Always verify current requirements and consult a licensed immigration attorney before taking action.
     </p>
   </div>
 </div>
 
 <script>
-window.__QUESTIONS=[{"text":"Which country are your ancestors from?","hint":"Even great-grandparents count for most programs","options":[{"label":"🇬🇧 England / United Kingdom","value":"ancestry_uk"},{"label":"🇫🇷 France","value":"ancestry_france"},{"label":"🇮🇪 Ireland","value":"ancestry_ireland"},{"label":"🇮🇹 Italy","value":"ancestry_italy"},{"label":"🇩🇪 Germany","value":"ancestry_germany"},{"label":"🇵🇹 Portugal","value":"ancestry_portugal"},{"label":"🇵🇱 Poland","value":"ancestry_poland"},{"label":"🇬🇷 Greece","value":"ancestry_greece"},{"label":"🇭🇺 Hungary","value":"ancestry_hungary"},{"label":"🇱🇹 Lithuania / Baltic States","value":"ancestry_baltic"},{"label":"🇷🇴 Romania / Eastern Europe","value":"ancestry_eastern"},{"label":"🇮🇱 Israel / Jewish heritage","value":"ancestry_jewish"},{"label":"🌎 Latin America","value":"ancestry_latin"},{"label":"No ancestry connection / Not sure","value":"no_ancestry"}]},{"text":"Can you document that ancestry with records?","hint":"Birth, marriage, naturalization or baptism certificates","options":[{"label":"Yes — I have documents already","value":"docs_yes"},{"label":"I’d need to research it","value":"docs_maybe"},{"label":"Probably not","value":"docs_no"}]},{"text":"Are you willing to spend time living abroad?","hint":"Some programs require physical presence","options":[{"label":"No — I prefer to stay in the US","value":"residency_no"},{"label":"Short visits only (a few weeks/year)","value":"residency_visits"},{"label":"Yes — a few months per year","value":"residency_part"},{"label":"Yes — I’d relocate for several years","value":"residency_full"}]},{"text":"What’s your budget for the citizenship process?","hint":"Includes fees, legal costs, investment","options":[{"label":"Under $5,000 (fees only)","value":"budget_low"},{"label":"$5,000 – $50,000","value":"budget_mid"},{"label":"$50,000 – $200,000","value":"budget_high"},{"label":"$200,000+","value":"budget_vhigh"}]},{"text":"How quickly do you want citizenship?","hint":"Some programs take months, others a decade","options":[{"label":"As fast as possible (under 2 years)","value":"time_fast"},{"label":"2–5 years is fine","value":"time_med"},{"label":"5–10 years is acceptable","value":"time_long"},{"label":"No rush — planning long-term","value":"time_none"}]},{"text":"What matters most to you?","hint":"This helps us rank which paths fit your goals best","options":[{"label":"🌍 EU passport & European travel freedom","value":"goal_eu"},{"label":"🛡️ Safety net & backup plan for my family","value":"goal_safety"},{"label":"💼 Business & investment opportunities","value":"goal_biz"},{"label":"💰 Tax optimization & financial freedom","value":"goal_tax"}]}];
+window.__QUESTIONS=[{"text":"Which countries are your ancestors from?","hint":"Select all that apply — even great-grandparents count for most programs","options":[{"label":"🇬🇧 England / United Kingdom","value":"ancestry_uk"},{"label":"🇫🇷 France","value":"ancestry_france"},{"label":"🇮🇪 Ireland","value":"ancestry_ireland"},{"label":"🇮🇹 Italy","value":"ancestry_italy"},{"label":"🇩🇪 Germany","value":"ancestry_germany"},{"label":"🇵🇹 Portugal","value":"ancestry_portugal"},{"label":"🇵🇱 Poland","value":"ancestry_poland"},{"label":"🇬🇷 Greece","value":"ancestry_greece"},{"label":"🇭🇺 Hungary","value":"ancestry_hungary"},{"label":"🇱🇹 Lithuania / Baltic States","value":"ancestry_baltic"},{"label":"🇷🇴 Romania / Eastern Europe","value":"ancestry_eastern"},{"label":"🇮🇱 Israel / Jewish heritage","value":"ancestry_jewish"},{"label":"🌎 Latin America","value":"ancestry_latin"},{"label":"No ancestry connection / Not sure","value":"no_ancestry"}]},{"text":"Can you document that ancestry with records?","hint":"Birth, marriage, naturalization or baptism certificates","options":[{"label":"Yes — I have documents already","value":"docs_yes"},{"label":"I’d need to research it","value":"docs_maybe"},{"label":"Probably not","value":"docs_no"}]},{"text":"Are you willing to spend time living abroad?","hint":"Some programs require physical presence","options":[{"label":"No — I prefer to stay in the US","value":"residency_no"},{"label":"Short visits only (a few weeks/year)","value":"residency_visits"},{"label":"Yes — a few months per year","value":"residency_part"},{"label":"Yes — I’d relocate for several years","value":"residency_full"}]},{"text":"What’s your budget for the citizenship process?","hint":"Includes fees, legal costs, investment","options":[{"label":"Under $5,000 (fees only)","value":"budget_low"},{"label":"$5,000 – $50,000","value":"budget_mid"},{"label":"$50,000 – $200,000","value":"budget_high"},{"label":"$200,000+","value":"budget_vhigh"}]},{"text":"How quickly do you want citizenship?","hint":"Some programs take months, others a decade","options":[{"label":"As fast as possible (under 2 years)","value":"time_fast"},{"label":"2–5 years is fine","value":"time_med"},{"label":"5–10 years is acceptable","value":"time_long"},{"label":"No rush — planning long-term","value":"time_none"}]},{"text":"What matters most to you?","hint":"This helps us rank which paths fit your goals best","options":[{"label":"🌍 EU passport & European travel freedom","value":"goal_eu"},{"label":"🛡️ Safety net & backup plan for my family","value":"goal_safety"},{"label":"💼 Business & investment opportunities","value":"goal_biz"},{"label":"💰 Tax optimization & financial freedom","value":"goal_tax"}]}];
 window.__PATHS=[{"id":"uk","country":"United Kingdom","flag":"🇬🇧","category":"ancestry","name":"British Citizenship by Descent","ease":5,"time":"6 mos–2 yrs","cost":"$500–$3,000","summary":"If a parent was born in the UK, you may already hold British citizenship. Recent law changes also allow grandchildren of UK-born citizens to register.","requirements":"UK-born parent (automatic) or UK-born grandparent (registration route); birth/marriage certificates; application to Home Office.","first_step":"Check if your parent or grandparent was a British citizen at birth — contact the UK Home Office or a UK immigration solicitor.","scores":{"ancestry_uk":10,"ancestry_france":2,"ancestry_ireland":4,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":1,"ancestry_greece":1,"ancestry_hungary":1,"ancestry_baltic":1,"ancestry_eastern":1,"ancestry_jewish":1,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":7,"time_med":9,"time_long":9,"time_none":9,"goal_eu":5,"goal_safety":9,"goal_biz":8,"goal_tax":5}},{"id":"france","country":"France","flag":"🇫🇷","category":"ancestry","name":"French Citizenship by Descent","ease":5,"time":"1–3 yrs","cost":"$500–$2,000","summary":"French citizenship passes from parent to child with no generation limit — as long as the chain of French nationality is unbroken.","requirements":"French-born or French-national parent; birth and marriage certificates for each generation; application at French consulate.","first_step":"Contact the nearest French consulate to confirm your parent’s French nationality status and request the required documents.","scores":{"ancestry_uk":2,"ancestry_france":10,"ancestry_ireland":1,"ancestry_italy":2,"ancestry_germany":1,"ancestry_portugal":4,"ancestry_poland":1,"ancestry_greece":1,"ancestry_hungary":1,"ancestry_baltic":1,"ancestry_eastern":1,"ancestry_jewish":1,"ancestry_latin":2,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":5,"time_med":9,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":8,"goal_biz":8,"goal_tax":5}},{"id":"ireland","country":"Ireland","flag":"🇮🇪","category":"ancestry","name":"Irish Citizenship by Descent","ease":5,"time":"1–3 yrs","cost":"$500–$2,000","summary":"If a parent or grandparent was born in Ireland, you may claim citizenship. One of the most accessible ancestry routes available.","requirements":"Birth/marriage certificates linking you to Irish-born ancestor; application to the Foreign Births Register.","first_step":"Order your ancestor’s Irish birth certificate from the GRO in Dublin.","scores":{"ancestry_uk":4,"ancestry_france":1,"ancestry_ireland":10,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":2,"ancestry_greece":1,"ancestry_hungary":1,"ancestry_baltic":2,"ancestry_eastern":1,"ancestry_jewish":1,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":5,"time_med":9,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":6,"goal_tax":4}},{"id":"italy","country":"Italy","flag":"🇮🇹","category":"ancestry","name":"Italian Citizenship by Descent (Jure Sanguinis)","ease":4,"time":"2–7 yrs","cost":"$1,000–$5,000","summary":"Italy allows citizenship through an unbroken patrilineal or matrilineal line with no generation limit.","requirements":"Vital records for every generation; consulate or court filing; no ancestor naturalized before child’s birth.","first_step":"Build your family tree and gather birth/marriage/death certificates for each generation.","scores":{"ancestry_uk":1,"ancestry_france":2,"ancestry_ireland":1,"ancestry_italy":10,"ancestry_germany":1,"ancestry_portugal":4,"ancestry_poland":1,"ancestry_greece":4,"ancestry_hungary":1,"ancestry_baltic":1,"ancestry_eastern":2,"ancestry_jewish":1,"ancestry_latin":2,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":7,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":2,"time_med":6,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":7,"goal_tax":5}},{"id":"germany","country":"Germany","flag":"🇩🇪","category":"ancestry","name":"German Citizenship by Descent","ease":4,"time":"1–3 yrs","cost":"$500–$2,000","summary":"Descendants of Germans who fled Nazi persecution have a constitutional right to restoration. Others may qualify via §15 StAG.","requirements":"German ancestry documentation; proof of persecution for §15 applicants; language test may apply.","first_step":"Determine if your ancestor lost citizenship via persecution — this unlocks the fastest route.","scores":{"ancestry_uk":2,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":10,"ancestry_portugal":1,"ancestry_poland":4,"ancestry_greece":1,"ancestry_hungary":2,"ancestry_baltic":4,"ancestry_eastern":2,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":4,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":6,"time_med":9,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":8,"goal_biz":8,"goal_tax":5}},{"id":"portugal_ancestry","country":"Portugal","flag":"🇵🇹","category":"ancestry","name":"Portuguese Citizenship by Descent","ease":4,"time":"1–3 yrs","cost":"$500–$2,000","summary":"Portuguese citizens’ children born abroad retain the right to nationality. Grandchildren may also qualify.","requirements":"Birth certificates linking you to Portuguese national; registration at consulate.","first_step":"Contact the nearest Portuguese consulate to confirm eligibility and document requirements.","scores":{"ancestry_uk":1,"ancestry_france":2,"ancestry_ireland":1,"ancestry_italy":2,"ancestry_germany":1,"ancestry_portugal":10,"ancestry_poland":1,"ancestry_greece":2,"ancestry_hungary":1,"ancestry_baltic":1,"ancestry_eastern":1,"ancestry_jewish":1,"ancestry_latin":4,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":6,"time_med":9,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":7,"goal_tax":4}},{"id":"poland","country":"Poland","flag":"🇵🇱","category":"ancestry","name":"Polish Citizenship by Descent","ease":4,"time":"1–4 yrs","cost":"$500–$3,000","summary":"Polish citizenship passes by blood and was never automatically lost by emigration — many Americans qualify without knowing it.","requirements":"Chain of Polish citizenship documentation; application to Polish voivode or consulate.","first_step":"Check if your Polish ancestor ever formally renounced citizenship — if not, you likely still qualify.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":10,"ancestry_greece":1,"ancestry_hungary":2,"ancestry_baltic":4,"ancestry_eastern":4,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":8,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":4,"time_med":7,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":6,"goal_tax":4}},{"id":"greece","country":"Greece","flag":"🇬🇷","category":"ancestry","name":"Greek Citizenship by Descent","ease":3,"time":"2–5 yrs","cost":"$1,000–$4,000","summary":"Greek citizenship passes through the paternal line. Grandchildren of Greek citizens can apply through the municipality of the ancestor.","requirements":"Birth/marriage certificates; Greek municipal records; application at Greek consulate.","first_step":"Locate your Greek ancestor’s municipal registry record — this is the critical document.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":2,"ancestry_germany":1,"ancestry_portugal":2,"ancestry_poland":1,"ancestry_greece":10,"ancestry_hungary":1,"ancestry_baltic":1,"ancestry_eastern":4,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":8,"docs_maybe":4,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":7,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":2,"time_med":6,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":6,"goal_biz":6,"goal_tax":4}},{"id":"hungary","country":"Hungary","flag":"🇭🇺","category":"ancestry","name":"Hungarian Citizenship by Descent","ease":5,"time":"6 mos–2 yrs","cost":"$500–$2,000","summary":"Hungary offers fast, free simplified naturalization for descendants. One of the easiest EU routes available to Americans.","requirements":"Hungarian ancestry documentation; basic Hungarian language statement; application via consulate.","first_step":"Gather your Hungarian ancestor’s birth certificate and immigration records showing Hungarian origin.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":4,"ancestry_portugal":1,"ancestry_poland":2,"ancestry_greece":1,"ancestry_hungary":10,"ancestry_baltic":2,"ancestry_eastern":4,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":8,"time_med":9,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":8,"goal_biz":7,"goal_tax":4}},{"id":"lithuania","country":"Lithuania","flag":"🇱🇹","category":"ancestry","name":"Lithuanian Citizenship by Descent","ease":4,"time":"1–3 yrs","cost":"$500–$2,000","summary":"Lithuania allows citizenship restoration for descendants of pre-WWII citizens. Strong EU passport with full Schengen access.","requirements":"Pre-1940 Lithuanian ancestor documentation; application to Migration Department.","first_step":"Request your ancestor’s records from the Lithuanian State Historical Archives.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":4,"ancestry_greece":1,"ancestry_hungary":2,"ancestry_baltic":10,"ancestry_eastern":4,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":8,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":5,"time_med":8,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":6,"goal_tax":4}},{"id":"romania","country":"Romania","flag":"🇷🇴","category":"ancestry","name":"Romanian Citizenship by Descent","ease":4,"time":"1–3 yrs","cost":"$500–$2,000","summary":"Romania offers citizenship to descendants of Romanians who lost citizenship under communist rule.","requirements":"Proof of Romanian ancestry; Romanian birth/marriage records; application to ANC.","first_step":"Determine if your ancestor was a Romanian citizen before communist-era denaturalization.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":4,"ancestry_greece":1,"ancestry_hungary":4,"ancestry_baltic":2,"ancestry_eastern":10,"ancestry_jewish":2,"ancestry_latin":0,"no_ancestry":0,"docs_yes":8,"docs_maybe":5,"docs_no":1,"residency_no":9,"residency_visits":9,"residency_part":9,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":5,"time_med":8,"time_long":9,"time_none":9,"goal_eu":10,"goal_safety":7,"goal_biz":6,"goal_tax":4}},{"id":"israel","country":"Israel","flag":"🇮🇱","category":"ancestry","name":"Israeli Citizenship (Law of Return)","ease":7,"time":"3–12 mos","cost":"$1,000–$3,000","summary":"Any person with a Jewish grandparent has the right to immigrate to Israel and receive citizenship.","requirements":"Proof of Jewish ancestry (grandparent); application through aliyah process; no active criminal record.","first_step":"Contact the Jewish Agency (Sochnut) to begin your aliyah application.","scores":{"ancestry_uk":1,"ancestry_france":1,"ancestry_ireland":1,"ancestry_italy":1,"ancestry_germany":2,"ancestry_portugal":1,"ancestry_poland":4,"ancestry_greece":1,"ancestry_hungary":2,"ancestry_baltic":4,"ancestry_eastern":4,"ancestry_jewish":10,"ancestry_latin":0,"no_ancestry":0,"docs_yes":9,"docs_maybe":7,"docs_no":3,"residency_no":5,"residency_visits":7,"residency_part":8,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":9,"time_med":9,"time_long":9,"time_none":9,"goal_eu":3,"goal_safety":9,"goal_biz":6,"goal_tax":5}},{"id":"portugal_d7","country":"Portugal","flag":"🇵🇹","category":"residency","name":"Portugal D7 Passive Income Visa","ease":7,"time":"5 yrs to citizenship","cost":"$3,000–$8,000","summary":"Move to Portugal on a D7 visa with passive income of $1,500+/mo. After 5 years of legal residency, apply for citizenship.","requirements":"Proof of passive income; NHR tax status; lease or property; criminal background check.","first_step":"Open a Portuguese bank account and apply for the NHR tax regime before arriving.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":2,"residency_part":5,"residency_full":9,"budget_low":3,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":1,"time_med":4,"time_long":9,"time_none":9,"goal_eu":9,"goal_safety":7,"goal_biz":7,"goal_tax":9}},{"id":"mexico","country":"Mexico","flag":"🇲🇽","category":"residency","name":"Mexican Temporary & Permanent Residency","ease":8,"time":"4 yrs to citizenship","cost":"$1,000–$3,000","summary":"Mexico offers accessible residency for retirees and remote workers. Citizenship available after 4 years.","requirements":"Proof of income or savings; consulate application; biometrics; Spanish proficiency for citizenship.","first_step":"Apply for Temporary Resident Visa at a Mexican consulate — bring proof of income.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":5,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":3,"residency_part":6,"residency_full":9,"budget_low":8,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":2,"time_med":6,"time_long":9,"time_none":9,"goal_eu":1,"goal_safety":6,"goal_biz":7,"goal_tax":7}},{"id":"paraguay","country":"Paraguay","flag":"🇵🇾","category":"residency","name":"Paraguayan Residency & Citizenship","ease":8,"time":"3 yrs to citizenship","cost":"$2,000–$5,000","summary":"One of the world’s fastest residency-to-citizenship paths. Low income requirements and quick processing.","requirements":"$5,500 bank deposit; in-person visit; 3 years to naturalization.","first_step":"Hire a local attorney — can often be completed in one trip.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":4,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":2,"residency_visits":5,"residency_part":8,"residency_full":9,"budget_low":7,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":4,"time_med":9,"time_long":9,"time_none":9,"goal_eu":2,"goal_safety":6,"goal_biz":7,"goal_tax":9}},{"id":"panama","country":"Panama","flag":"🇵🇦","category":"residency","name":"Panama Friendly Nations Visa","ease":8,"time":"5 yrs to citizenship","cost":"$5,000–$10,000","summary":"Panama’s Friendly Nations program offers fast residency for US citizens. Territorial tax system, no capital gains tax.","requirements":"$5,000 bank deposit or property; proof of economic ties; local attorney.","first_step":"Open a Panamanian bank account and hire a local lawyer to file your residency application.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":3,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":4,"residency_part":7,"residency_full":9,"budget_low":4,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":3,"time_med":7,"time_long":9,"time_none":9,"goal_eu":1,"goal_safety":7,"goal_biz":9,"goal_tax":9}},{"id":"ecuador","country":"Ecuador","flag":"🇪🇨","category":"residency","name":"Ecuador Pensioner / Investor Visa","ease":8,"time":"3 yrs to citizenship","cost":"$1,000–$3,000","summary":"Residency for $800/mo pension income or $30,000 investment. One of South America’s lowest cost-of-living options.","requirements":"$800/mo income or $30,000 investment; criminal background check; health insurance.","first_step":"Gather proof of income and apply at an Ecuadorian consulate or upon arrival.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":5,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":3,"residency_part":7,"residency_full":9,"budget_low":9,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":3,"time_med":8,"time_long":9,"time_none":9,"goal_eu":1,"goal_safety":6,"goal_biz":6,"goal_tax":7}},{"id":"brazil","country":"Brazil","flag":"🇧🇷","category":"residency","name":"Brazilian Permanent Residency","ease":6,"time":"4 yrs to citizenship","cost":"$2,000–$6,000","summary":"Powerful passport with visa-free access to 170+ countries. Various residency routes including retirement and investment.","requirements":"Retirement income or investment ($150K+); 4 years residency; Portuguese language for citizenship.","first_step":"Apply for the retirement or investor visa at the Brazilian Federal Police.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":3,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":6,"no_ancestry":9,"docs_yes":6,"docs_maybe":6,"docs_no":7,"residency_no":1,"residency_visits":3,"residency_part":6,"residency_full":9,"budget_low":2,"budget_mid":7,"budget_high":9,"budget_vhigh":9,"time_fast":1,"time_med":5,"time_long":8,"time_none":9,"goal_eu":2,"goal_safety":6,"goal_biz":8,"goal_tax":6}},{"id":"uruguay","country":"Uruguay","flag":"🇺🇾","category":"residency","name":"Uruguayan Residency & Citizenship","ease":7,"time":"3 yrs to citizenship","cost":"$2,000–$5,000","summary":"Stable, safe, democratic — Uruguay offers one of South America’s most straightforward citizenship paths.","requirements":"Proof of income ($1,500/mo); 3 years residency; Spanish basics.","first_step":"Consult an Uruguayan immigration attorney to begin the residency process.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":5,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":3,"residency_part":7,"residency_full":9,"budget_low":5,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":3,"time_med":8,"time_long":9,"time_none":9,"goal_eu":2,"goal_safety":8,"goal_biz":7,"goal_tax":7}},{"id":"costa_rica","country":"Costa Rica","flag":"🇨🇷","category":"residency","name":"Costa Rica Pensionado / Rentista Visa","ease":7,"time":"7 yrs to citizenship","cost":"$2,000–$5,000","summary":"Peaceful, stable, English-friendly. Top retirement destination with a clear path to citizenship.","requirements":"$1,000/mo pension income or $2,500/mo for Rentista; 7 years residency.","first_step":"Gather income documentation and contact a Costa Rican immigration attorney.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":4,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":1,"residency_visits":3,"residency_part":6,"residency_full":9,"budget_low":6,"budget_mid":9,"budget_high":9,"budget_vhigh":9,"time_fast":1,"time_med":2,"time_long":6,"time_none":9,"goal_eu":1,"goal_safety":8,"goal_biz":6,"goal_tax":6}},{"id":"spain","country":"Spain","flag":"🇪🇸","category":"residency","name":"Spain Digital Nomad / Non-Lucrative Visa","ease":5,"time":"10 yrs to citizenship","cost":"$3,000–$8,000","summary":"Live in Spain as a remote worker or retiree. Latin Americans qualify in just 2 years. Exceptional quality of life.","requirements":"Passive or remote income; health insurance; 10 years residency (2 for Latin Americans).","first_step":"Apply for the Non-Lucrative or Digital Nomad Visa at a Spanish consulate.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":3,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":5,"no_ancestry":9,"docs_yes":6,"docs_maybe":6,"docs_no":7,"residency_no":1,"residency_visits":2,"residency_part":4,"residency_full":9,"budget_low":2,"budget_mid":7,"budget_high":9,"budget_vhigh":9,"time_fast":1,"time_med":2,"time_long":4,"time_none":9,"goal_eu":9,"goal_safety":7,"goal_biz":7,"goal_tax":6}},{"id":"dominican_republic","country":"Dominican Republic","flag":"🇩🇴","category":"residency","name":"Dominican Republic Residency","ease":7,"time":"2 yrs to citizenship","cost":"$2,000–$5,000","summary":"Fast-track Caribbean residency with one of the shortest paths to citizenship in the region.","requirements":"Investment of $200K or pension/income proof; 2 years residency.","first_step":"Consult a Dominican immigration attorney about the investor or pension residency track.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":5,"no_ancestry":9,"docs_yes":6,"docs_maybe":7,"docs_no":8,"residency_no":2,"residency_visits":5,"residency_part":8,"residency_full":9,"budget_low":2,"budget_mid":8,"budget_high":9,"budget_vhigh":9,"time_fast":5,"time_med":9,"time_long":9,"time_none":9,"goal_eu":1,"goal_safety":5,"goal_biz":7,"goal_tax":7}},{"id":"dominica","country":"Dominica","flag":"🇩🇲","category":"investment","name":"Dominica Citizenship by Investment","ease":9,"time":"3–6 mos","cost":"$100,000+","summary":"One of the most affordable and fastest CBI programs globally. Visa-free to 140+ countries.","requirements":"$100,000 donation (single) or $200,000 real estate; background check.","first_step":"Engage an authorized agent — direct applications are not accepted.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":9,"residency_no":10,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":1,"budget_high":9,"budget_vhigh":9,"time_fast":10,"time_med":10,"time_long":10,"time_none":10,"goal_eu":3,"goal_safety":8,"goal_biz":9,"goal_tax":8}},{"id":"st_kitts","country":"St. Kitts & Nevis","flag":"🇰🇳","category":"investment","name":"St. Kitts & Nevis Citizenship by Investment","ease":9,"time":"3–6 mos","cost":"$150,000+","summary":"The world’s oldest CBI program. Visa-free to 160+ countries including Schengen.","requirements":"$150,000 donation or $200,000 real estate; background check; no residency requirement.","first_step":"Hire an authorized agent — they handle all paperwork.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":9,"residency_no":10,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":9,"budget_vhigh":9,"time_fast":10,"time_med":10,"time_long":10,"time_none":10,"goal_eu":4,"goal_safety":8,"goal_biz":9,"goal_tax":9}},{"id":"grenada","country":"Grenada","flag":"🇬🇩","category":"investment","name":"Grenada Citizenship by Investment","ease":9,"time":"3–6 mos","cost":"$150,000+","summary":"The only Caribbean passport with a US E-2 Treaty Investor Visa agreement.","requirements":"$150,000 donation or $220,000 real estate; background check.","first_step":"Engage a licensed Grenada CBI agent who can advise on the US E-2 visa option.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":9,"residency_no":10,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":9,"budget_vhigh":9,"time_fast":10,"time_med":10,"time_long":10,"time_none":10,"goal_eu":3,"goal_safety":8,"goal_biz":10,"goal_tax":8}},{"id":"antigua","country":"Antigua & Barbuda","flag":"🇦🇬","category":"investment","name":"Antigua & Barbuda Citizenship by Investment","ease":9,"time":"3–6 mos","cost":"$100,000+","summary":"Affordable CBI with visa-free access to 150+ countries including UK and Schengen.","requirements":"$100,000 NDF donation; 5-day residency requirement.","first_step":"Contact an authorized agent to confirm pricing and start the application.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":9,"residency_no":8,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":1,"budget_high":9,"budget_vhigh":9,"time_fast":10,"time_med":10,"time_long":10,"time_none":10,"goal_eu":3,"goal_safety":8,"goal_biz":8,"goal_tax":8}},{"id":"vanuatu","country":"Vanuatu","flag":"🇻🇺","category":"investment","name":"Vanuatu Development Support Program","ease":10,"time":"1–3 mos","cost":"$130,000+","summary":"The world’s fastest CBI program — approved in as little as 30 days. Zero income, capital gains, or inheritance taxes.","requirements":"$130,000 contribution; background check; no residency required.","first_step":"Select an authorized agent — fully remote and very fast.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":9,"residency_no":10,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":9,"budget_vhigh":9,"time_fast":10,"time_med":10,"time_long":10,"time_none":10,"goal_eu":2,"goal_safety":7,"goal_biz":8,"goal_tax":10}},{"id":"turkey","country":"Turkey","flag":"🇹🇷","category":"investment","name":"Turkish Citizenship by Investment","ease":8,"time":"3–6 mos","cost":"$400,000+","summary":"$400,000 real estate investment grants citizenship. Strategic location bridging Europe and Asia.","requirements":"$400,000 real estate held 3 years; background check; no language test.","first_step":"Work with a Turkish real estate attorney to identify qualifying properties.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":8,"residency_no":10,"residency_visits":10,"residency_part":10,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":4,"budget_vhigh":9,"time_fast":9,"time_med":10,"time_long":10,"time_none":10,"goal_eu":3,"goal_safety":6,"goal_biz":9,"goal_tax":7}},{"id":"malta","country":"Malta","flag":"🇲🇹","category":"investment","name":"Malta Exceptional Investor Naturalization (MEIN)","ease":5,"time":"1–3 yrs","cost":"$750,000+","summary":"The only EU citizenship by investment program. Full EU citizenship — live and work anywhere in the EU.","requirements":"€600,000+ contribution + €700,000 real estate; 1–3 years residency.","first_step":"Engage a Malta CBI licensed agent — official representation is required.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":8,"residency_no":4,"residency_visits":6,"residency_part":8,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":0,"budget_vhigh":10,"time_fast":5,"time_med":8,"time_long":10,"time_none":10,"goal_eu":10,"goal_safety":9,"goal_biz":10,"goal_tax":8}},{"id":"greece_gv","country":"Greece","flag":"🇬🇷","category":"investment","name":"Greece Golden Visa","ease":7,"time":"5 yrs to citizenship","cost":"$250,000+","summary":"€250,000 real estate for EU residency — and a path to citizenship after 7 years.","requirements":"€250,000 real estate (€500,000 in Athens); brief annual visit.","first_step":"Engage a Greek lawyer to identify qualifying properties.","scores":{"ancestry_uk":0,"ancestry_france":0,"ancestry_ireland":0,"ancestry_italy":0,"ancestry_germany":0,"ancestry_portugal":0,"ancestry_poland":0,"ancestry_greece":0,"ancestry_hungary":0,"ancestry_baltic":0,"ancestry_eastern":0,"ancestry_jewish":0,"ancestry_latin":0,"no_ancestry":9,"docs_yes":8,"docs_maybe":8,"docs_no":8,"residency_no":8,"residency_visits":9,"residency_part":9,"residency_full":10,"budget_low":0,"budget_mid":0,"budget_high":8,"budget_vhigh":9,"time_fast":2,"time_med":4,"time_long":8,"time_none":10,"goal_eu":10,"goal_safety":8,"goal_biz":9,"goal_tax":7}}];
+(function(){
+  var s=document.createElement("style");
+  s.textContent=".option-btn.selected{background:rgba(99,102,241,0.3);border-color:rgb(99,102,241)!important}.option-btn{cursor:pointer;background:rgba(255,255,255,0.03)}";
+  document.head.appendChild(s);
+})();
 
 var __state={answers:{},currentQ:0,results:[],selectedPaths:[],notes:{}};
-function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
-function $(id){return document.getElementById(id);}
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function startQuiz(){__state.answers={};__state.currentQ=0;showScreen('screen-quiz');renderQuestion(0);}
-function renderQuestion(idx){
-  var qs=window.__QUESTIONS,q=qs[idx],pct=Math.round((idx/qs.length)*100);
-  $('q-label').textContent='Question '+(idx+1)+' of '+qs.length;
-  $('q-pct').textContent=pct+'%';$('q-progress').style.width=pct+'%';$('q-hint').textContent=q.hint||'';
-  var body=$('quiz-body');
-  body.innerHTML='<h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 leading-snug">'+escHtml(q.text)+'</h2>';
-  q.options.forEach(function(opt){
-    var sel=__state.answers[idx]===opt.value;
-    var btn=document.createElement('button');btn.type='button';
-    btn.className='w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-150 '+(sel?'border-blue-600 bg-blue-50 text-blue-900 font-semibold':'border-gray-200 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50');
-    btn.textContent=opt.label;btn.onclick=function(){selectOption(idx,opt.value);};body.appendChild(btn);
-  });
-  $('btn-back').classList.toggle('hidden',idx===0);
-  $('btn-next').disabled=!__state.answers.hasOwnProperty(idx);
-  $('btn-next').textContent=idx===qs.length-1?'See My Results →':'Next →';
-}
-function selectOption(idx,val){__state.answers[idx]=val;renderQuestion(idx);}
-function prevQuestion(){if(__state.currentQ>0){__state.currentQ--;renderQuestion(__state.currentQ);}}
-function nextQuestion(){var qs=window.__QUESTIONS;if(!__state.answers.hasOwnProperty(__state.currentQ))return;if(__state.currentQ<qs.length-1){__state.currentQ++;renderQuestion(__state.currentQ);}else computeAndShowResults();}
-function computeAndShowResults(){
-  showScreen('screen-loading');
-  var msgs=['Analyzing your ancestry profile…','Matching citizenship pathways…','Calculating eligibility scores…','Ranking your best options…','Almost there…'];
-  var mi=0,lm=$('loading-msg');lm.textContent=msgs[0];
-  var iv=setInterval(function(){mi=(mi+1)%msgs.length;lm.textContent=msgs[mi];},700);
-  setTimeout(function(){
-    clearInterval(iv);
-    var scored=window.__PATHS.map(function(p){var score=0;Object.keys(__state.answers).forEach(function(qi){score+=(p.scores[__state.answers[qi]]||0);});return{path:p,score:score};});
-    scored.sort(function(a,b){return b.score-a.score;});
-    __state.results=scored;__state.selectedPaths=scored.slice(0,3).map(function(s){return s.path.id;});
-    filterResults('all',document.querySelector('.filter-pill'));showScreen('screen-results');
-  },3000);
-}
-function renderResults(filter){
-  var scored=__state.results,filtered;
-  if(filter==='top')filtered=scored.slice(0,5);else if(filter==='all')filtered=scored;else filtered=scored.filter(function(s){return s.path.category===filter;});
-  var max=scored.length>0?scored[0].score:1;
-  $('results-headline').textContent='Your Top Citizenship Pathways';
-  $('results-subline').textContent='Based on your profile, here are the programs that fit you best.';
-  var grid=$('results-grid');grid.innerHTML='';
-  if(!filtered.length){grid.innerHTML='<p class="text-gray-500 col-span-full text-center py-12">No pathways match this filter.</p>';return;}
-  filtered.forEach(function(item){
-    var p=item.path,pct=max>0?Math.round((item.score/max)*100):0,isSelected=__state.selectedPaths.indexOf(p.id)>=0;
-    var catColors={ancestry:'bg-purple-100 text-purple-700',residency:'bg-green-100 text-green-700',investment:'bg-yellow-100 text-yellow-700'};
-    var catColor=catColors[p.category]||'bg-gray-100 text-gray-700';
-    var easeBar='';for(var i=0;i<10;i++)easeBar+='<span class="inline-block w-2 h-2 rounded-full mr-0.5 '+(i<p.ease?'bg-green-500':'bg-gray-200')+'"></span>';
-    var card=document.createElement('div');
-    card.className='bg-white rounded-2xl border-2 p-6 flex flex-col gap-3 transition-all cursor-pointer '+(isSelected?'border-blue-500 shadow-lg':'border-gray-200 hover:border-blue-300 hover:shadow-md');
-    card.dataset.pathId=p.id;card.onclick=function(){toggleResultCard(p.id,card);};
-    card.innerHTML='<div class="flex items-start justify-between gap-2"><div class="flex items-center gap-2"><span class="text-2xl">'+p.flag+'</span><div><div class="font-bold text-gray-900 text-base leading-tight">'+escHtml(p.country)+'</div><div class="text-xs '+catColor+' rounded-full px-2 py-0.5 inline-block mt-0.5 capitalize">'+p.category+'</div></div></div><div class="text-right shrink-0"><div class="text-2xl font-bold text-blue-600">'+pct+'%</div><div class="text-xs text-gray-400">match</div></div></div>'
-      +'<div class="font-semibold text-gray-800 text-sm leading-snug">'+escHtml(p.name)+'</div>'
-      +'<p class="text-gray-600 text-sm leading-relaxed">'+escHtml(p.summary)+'</p>'
-      +'<div class="grid grid-cols-2 gap-2 text-xs text-gray-500 border-t pt-3 mt-1"><div><span class="font-medium text-gray-700">Timeline:</span> '+escHtml(p.time)+'</div><div><span class="font-medium text-gray-700">Cost:</span> '+escHtml(p.cost)+'</div></div>'
-      +'<div class="text-xs text-gray-500"><span class="font-medium text-gray-700">Ease:</span> '+easeBar+'</div>'
-      +'<div class="text-xs mt-1 '+(isSelected?'text-blue-600 font-semibold':'text-gray-400')+'">'+(isSelected?'✓ Selected for your report':'Click to add to report')+'</div>';
-    grid.appendChild(card);
-  });
-}
-function toggleResultCard(pathId,cardEl){
-  var idx=__state.selectedPaths.indexOf(pathId);if(idx>=0)__state.selectedPaths.splice(idx,1);else __state.selectedPaths.push(pathId);
-  var sel=__state.selectedPaths.indexOf(pathId)>=0;
-  cardEl.className='bg-white rounded-2xl border-2 p-6 flex flex-col gap-3 transition-all cursor-pointer '+(sel?'border-blue-500 shadow-lg':'border-gray-200 hover:border-blue-300 hover:shadow-md');
-  var last=cardEl.querySelector('div:last-child');if(last){last.textContent=sel?'✓ Selected for your report':'Click to add to report';last.className='text-xs mt-1 '+(sel?'text-blue-600 font-semibold':'text-gray-400');}
-}
-function filterResults(cat,el){document.querySelectorAll('.filter-pill').forEach(function(b){b.classList.remove('active');});if(el)el.classList.add('active');renderResults(cat);}
-function goToIntake(){renderIntakeCards();showScreen('screen-intake');}
-function renderIntakeCards(){
-  var container=$('intake-cards');if(!container)return;container.innerHTML='';
-  window.__PATHS.forEach(function(p){
-    if(__state.selectedPaths.indexOf(p.id)<0)return;
-    var card=document.createElement('div');card.id='intake-card-'+p.id;card.className='bg-white rounded-xl border border-gray-200 p-5';
-    card.innerHTML='<div class="flex items-center gap-3 mb-3"><span class="text-2xl">'+p.flag+'</span><div><div class="font-bold text-gray-900">'+escHtml(p.name)+'</div><div class="text-xs text-gray-500 capitalize">'+p.category+' pathway</div></div></div>'
-      +'<div class="bg-blue-50 rounded-lg p-3 mb-3"><div class="text-xs font-semibold text-blue-700 mb-1">First Step</div><div class="text-sm text-blue-900">'+escHtml(p.first_step)+'</div></div>'
-      +'<div class="mb-2"><div class="text-xs font-semibold text-gray-500 mb-1">Requirements</div><div class="text-sm text-gray-700">'+escHtml(p.requirements)+'</div></div>'
-      +'<div><div class="text-xs font-semibold text-gray-500 mb-1">Your Notes</div><textarea id="note-'+p.id+'" rows="2" placeholder="Add personal notes…" class="w-full text-sm border border-gray-200 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400">'+escHtml(__state.notes[p.id]||'')+'</textarea></div>';
-    container.appendChild(card);
-  });
-  if(!__state.selectedPaths.length)container.innerHTML='<p class="text-gray-500 text-sm text-center py-6">No pathways selected. Go back and select some.</p>';
-}
-function saveNote(pathId){var el=$('note-'+pathId);if(el)__state.notes[pathId]=el.value;}
-function generatePDF(){
-  __state.selectedPaths.forEach(function(pid){saveNote(pid);});
-  var doc=new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  var pageW=210,margin=18,y=20;
-  doc.setFillColor(30,64,175);doc.rect(0,0,pageW,32,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');
-  doc.text('Dual Citizen Path Finder',margin,14);doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Personalized Citizenship Report — dualcitizen.world',margin,22);
-  function val(id){var el=document.getElementById(id);return el?el.value:'';}
-  var name=val('p-name'),dob=val('p-dob'),birthplace=val('p-birthplace'),email=val('p-email');
-  y=42;doc.setTextColor(30,30,30);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Your Profile',margin,y);y+=7;doc.setFont('helvetica','normal');doc.setFontSize(9);
-  if(name){doc.text('Name: '+name,margin,y);y+=5;}if(dob){doc.text('Date of Birth: '+dob,margin,y);y+=5;}
-  if(birthplace){doc.text('Birthplace: '+birthplace,margin,y);y+=5;}if(email){doc.text('Email: '+email,margin,y);y+=5;}
-  y+=5;doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Your Answers',margin,y);y+=7;doc.setFont('helvetica','normal');doc.setFontSize(9);
-  Object.keys(__state.answers).forEach(function(qi){
-    var q=window.__QUESTIONS[parseInt(qi)],ansVal=__state.answers[qi],opt=q.options.find(function(o){return o.value===ansVal;});
-    doc.setFont('helvetica','bold');var lines=doc.splitTextToSize((parseInt(qi)+1)+'. '+q.text,pageW-margin*2);doc.text(lines,margin,y);y+=lines.length*4.5;
-    doc.setFont('helvetica','normal');doc.text('   → '+(opt?opt.label:ansVal),margin,y);y+=6;if(y>260){doc.addPage();y=20;}
-  });
-  y+=4;
-  window.__PATHS.forEach(function(p){
-    if(__state.selectedPaths.indexOf(p.id)<0)return;
-    if(y>230){doc.addPage();y=20;}
-    doc.setFillColor(239,246,255);doc.rect(margin-2,y-4,pageW-margin*2+4,10,'F');
-    doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(30,64,175);doc.text(p.flag+' '+p.name,margin,y+3);y+=12;
-    doc.setTextColor(30,30,30);doc.setFontSize(9);doc.setFont('helvetica','normal');
-    var sl=doc.splitTextToSize(p.summary,pageW-margin*2);doc.text(sl,margin,y);y+=sl.length*4.5+2;
-    doc.setFont('helvetica','bold');doc.text('Timeline: ',margin,y);doc.setFont('helvetica','normal');doc.text(p.time,margin+20,y);y+=5;
-    doc.setFont('helvetica','bold');doc.text('Cost: ',margin,y);doc.setFont('helvetica','normal');doc.text(p.cost,margin+12,y);y+=5;
-    doc.setFont('helvetica','bold');doc.text('First Step:',margin,y);y+=5;doc.setFont('helvetica','normal');
-    var fl=doc.splitTextToSize(p.first_step,pageW-margin*2-4);doc.text(fl,margin+4,y);y+=fl.length*4.5+2;
-    var note=__state.notes[p.id];if(note&&note.trim()){doc.setFont('helvetica','bolditalic');doc.text('Your Note:',margin,y);y+=5;doc.setFont('helvetica','italic');var nl=doc.splitTextToSize(note,pageW-margin*2-4);doc.text(nl,margin+4,y);y+=nl.length*4.5+2;}
-    y+=6;if(y>260){doc.addPage();y=20;}
-  });
-  var pc=doc.internal.getNumberOfPages();for(var i=1;i<=pc;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Generated by dualcitizen.world — Page '+i+' of '+pc,margin,290);}
-  doc.save((name?name.replace(/\s+/g,'_')+'_':'')+'DualCitizen_Report.pdf');
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
 }
 
+function startQuiz(){
+  __state={answers:{},currentQ:0,results:[],selectedPaths:[],notes:{}};
+  renderQuestion(0);
+  showScreen("screen-quiz");
+}
+
+function renderQuestion(idx){
+  var q=window.__QUESTIONS[idx];
+  var isMulti=(idx===0);
+  var total=window.__QUESTIONS.length;
+  var selected=isMulti?(__state.answers[0]||[]):__state.answers[idx];
+  var pb=document.getElementById("quiz-progress-bar");
+  var pt=document.getElementById("quiz-progress-text");
+  var qt=document.getElementById("quiz-question-text");
+  var qh=document.getElementById("quiz-question-hint");
+  if(pb)pb.style.width=Math.round((idx/total)*100)+"%";
+  if(pt)pt.textContent="Question "+(idx+1)+" of "+total;
+  if(qt)qt.textContent=q.text;
+  if(qh)qh.textContent=q.hint||"";
+  var html="";
+  if(isMulti)html+="<p class=\"text-sm font-medium mb-3\" style=\"color:rgb(165,180,252)\">Select all that apply</p>";
+  q.options.forEach(function(opt){
+    var isSel=isMulti?(selected.indexOf(opt.value)>-1):(selected===opt.value);
+    var selCls=isSel?" selected":"";
+    html+="<button class=\"option-btn w-full text-left px-4 py-3 rounded-lg border border-white/10 hover:border-indigo-400 transition-all mb-2"+selCls+"\" data-idx=\""+idx+"\" data-val=\""+opt.value+"\" onclick=\"selectOption(parseInt(this.dataset.idx),this.dataset.val)\">";
+    if(isMulti){
+      var boxStyle=isSel?"background:rgb(99,102,241);border-color:rgb(99,102,241)":"border-color:rgba(255,255,255,0.35)";
+      var chk=isSel?"<svg width=\"11\" height=\"11\" viewBox=\"0 0 12 12\" fill=\"none\"><path d=\"M2 6l3 3 5-5\" stroke=\"white\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>":"";
+      html+="<span style=\"display:inline-flex;align-items:center;gap:10px\"><span style=\"width:20px;height:20px;border-radius:4px;border:2px solid;"+boxStyle+";display:inline-flex;align-items:center;justify-content:center;flex-shrink:0\">"+chk+"</span>"+opt.label+"</span>";
+    }else{
+      html+=opt.label;
+    }
+    html+="</button>";
+  });
+  var qo=document.getElementById("quiz-options");
+  if(qo)qo.innerHTML=html;
+  var prevBtn=document.getElementById("quiz-prev-btn");
+  if(prevBtn)prevBtn.style.display=idx>0?"inline-flex":"none";
+  var nextBtn=document.getElementById("quiz-next-btn");
+  if(nextBtn){
+    var hasAns=isMulti?(selected.length>0):(selected!==undefined&&selected!==null&&selected!=="");
+    nextBtn.textContent=idx===total-1?"See My Results →":"Next →";
+    nextBtn.disabled=!hasAns;
+    nextBtn.style.opacity=hasAns?"1":"0.5";
+    nextBtn.style.cursor=hasAns?"pointer":"not-allowed";
+  }
+}
+
+function selectOption(idx,val){
+  if(idx===0){
+    var sel=(__state.answers[0]||[]).slice();
+    if(val==="no_ancestry"){
+      sel=["no_ancestry"];
+    }else{
+      sel=sel.filter(function(v){return v!=="no_ancestry";});
+      var pos=sel.indexOf(val);
+      if(pos>-1){sel.splice(pos,1);}else{sel.push(val);}
+    }
+    __state.answers[0]=sel;
+  }else{
+    __state.answers[idx]=val;
+  }
+  renderQuestion(idx);
+}
+
+function prevQuestion(){
+  if(__state.currentQ>0){__state.currentQ--;renderQuestion(__state.currentQ);}
+}
+
+function nextQuestion(){
+  var idx=__state.currentQ;
+  var isMulti=(idx===0);
+  var hasAns=isMulti?((__state.answers[0]||[]).length>0):(__state.answers[idx]!==undefined&&__state.answers[idx]!==null&&__state.answers[idx]!=="");
+  if(!hasAns)return;
+  if(idx<window.__QUESTIONS.length-1){__state.currentQ++;renderQuestion(__state.currentQ);}
+  else{computeAndShowResults();}
+}
+
+function computeAndShowResults(){
+  showScreen("screen-loading");
+  setTimeout(function(){
+    var paths=window.__PATHS;
+    var ancestryVals=__state.answers[0]||[];
+    var results=paths.map(function(path){
+      var score=0;
+      var ancScore=0;
+      ancestryVals.forEach(function(v){
+        var s=(path.scores&&path.scores[v]!==undefined)?path.scores[v]:0;
+        if(s>ancScore)ancScore=s;
+      });
+      score+=ancScore;
+      for(var q=1;q<window.__QUESTIONS.length;q++){
+        var ans=__state.answers[q];
+        if(ans!==undefined&&path.scores&&path.scores[ans]!==undefined)score+=path.scores[ans];
+      }
+      return{path:path,score:score};
+    });
+    var maxScore=0;
+    results.forEach(function(r){if(r.score>maxScore)maxScore=r.score;});
+    __state.results=results.map(function(r){
+      return{path:r.path,score:r.score,pct:maxScore>0?Math.round((r.score/maxScore)*100):0};
+    }).sort(function(a,b){return b.score-a.score;});
+    renderResults("all");
+    showScreen("screen-results");
+  },3000);
+}
+
+function renderResults(filter){
+  var results=__state.results;
+  if(filter&&filter!=="all")results=results.filter(function(r){return r.path.category===filter;});
+  var html="";
+  results.forEach(function(r,i){
+    var p=r.path;
+    var isSaved=__state.selectedPaths.indexOf(p.id)>-1;
+    var rankStyle=i===0?"background:rgb(234,179,8);color:black":i===1?"background:rgb(209,213,219);color:black":i===2?"background:rgb(161,102,38);color:white":"background:rgba(255,255,255,0.1);color:white";
+    html+="<div class=\"result-card bg-white/5 rounded-xl p-5 mb-4 border border-white/10 cursor-pointer\" data-pathid=\""+p.id+"\" onclick=\"toggleResultCard(this.dataset.pathid,this)\">";
+    html+="<div class=\"flex items-start justify-between gap-3\">";
+    html+="<div class=\"flex items-center gap-3 flex-1\">";
+    html+="<span style=\"font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;"+rankStyle+"\">#"+(i+1)+"</span>";
+    html+="<div><h3 class=\"font-semibold text-white\">"+p.flag+" "+p.name+"</h3>";
+    html+="<p class=\"text-xs mt-0.5\" style=\"color:rgba(255,255,255,0.5)\">"+p.category.charAt(0).toUpperCase()+p.category.slice(1)+" pathway</p></div></div>";
+    html+="<div class=\"text-right flex-shrink-0\"><div class=\"text-2xl font-bold text-indigo-400\">"+r.pct+"%</div><div class=\"text-xs\" style=\"color:rgba(255,255,255,0.5)\">match</div></div></div>";
+    html+="<div class=\"mt-3\"><div class=\"flex justify-between text-xs mb-1\" style=\"color:rgba(255,255,255,0.5)\"><span>Ease of process</span><span>"+p.ease+"/10</span></div>";
+    html+="<div class=\"h-1.5 rounded-full\" style=\"background:rgba(255,255,255,0.1)\"><div class=\"h-1.5 rounded-full bg-indigo-500\" style=\"width:"+(p.ease*10)+"%\"></div></div></div>";
+    html+="<div class=\"result-detail hidden mt-4 pt-4 border-t border-white/10\">";
+    html+="<p class=\"text-sm mb-3\" style=\"color:rgba(255,255,255,0.7)\">"+p.summary+"</p>";
+    html+="<div class=\"grid grid-cols-2 gap-2 text-xs mb-3\">";
+    html+="<div class=\"rounded p-2\" style=\"background:rgba(255,255,255,0.05)\"><div style=\"color:rgba(255,255,255,0.4)\">Timeline</div><div class=\"text-white font-medium\">"+p.timeline+"</div></div>";
+    html+="<div class=\"rounded p-2\" style=\"background:rgba(255,255,255,0.05)\"><div style=\"color:rgba(255,255,255,0.4)\">Cost</div><div class=\"text-white font-medium\">"+p.cost+"</div></div></div>";
+    if(p.requirements&&p.requirements.length){
+      html+="<div class=\"text-xs mb-2\" style=\"color:rgba(255,255,255,0.5)\">Key requirements:</div><ul class=\"text-xs space-y-1\" style=\"color:rgba(255,255,255,0.7)\">";
+      p.requirements.forEach(function(req){html+="<li>• "+req+"</li>";});
+      html+="</ul>";
+    }
+    var btnStyle=isSaved?"background:rgb(99,102,241);color:white":"background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)";
+    html+="<button class=\"mt-3 px-3 py-1.5 rounded text-xs\" style=\""+btnStyle+"\" data-pathid=\""+p.id+"\" onclick=\"event.stopPropagation();toggleSavePath(this.dataset.pathid,this)\">"+(isSaved?"✓ Saved":"+ Save to Compare")+"</button>";
+    html+="</div></div>";
+  });
+  if(!html)html="<p class=\"text-center py-8\" style=\"color:rgba(255,255,255,0.5)\">No results for this filter.</p>";
+  var c=document.getElementById("results-container");
+  if(c)c.innerHTML=html;
+}
+
+function toggleResultCard(pathId,cardEl){
+  var d=cardEl.querySelector(".result-detail");
+  if(d)d.classList.toggle("hidden");
+}
+
+function toggleSavePath(pathId,btn){
+  var idx=__state.selectedPaths.indexOf(pathId);
+  if(idx>-1){
+    __state.selectedPaths.splice(idx,1);
+    btn.textContent="+ Save to Compare";
+    btn.style.cssText="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)";
+  }else{
+    __state.selectedPaths.push(pathId);
+    btn.textContent="✓ Saved";
+    btn.style.cssText="background:rgb(99,102,241);color:white";
+  }
+}
+
+function filterResults(cat,el){
+  document.querySelectorAll(".filter-pill").forEach(function(b){b.classList.remove("active");});
+  if(el)el.classList.add("active");
+  renderResults(cat);
+}
+
+function goToIntake(){renderIntakeCards();showScreen("screen-intake");}
+
+function renderIntakeCards(){
+  var paths=__state.selectedPaths.length>0
+    ?window.__PATHS.filter(function(p){return __state.selectedPaths.indexOf(p.id)>-1;})
+    :__state.results.slice(0,3).map(function(r){return r.path;});
+  var html="";
+  paths.forEach(function(p){
+    var note=__state.notes[p.id]||"";
+    html+="<div class=\"bg-white/5 rounded-xl p-5 mb-4 border border-white/10\">";
+    html+="<h3 class=\"font-semibold text-white mb-1\">"+p.flag+" "+p.name+"</h3>";
+    html+="<p class=\"text-sm mb-3\" style=\"color:rgba(255,255,255,0.6)\">"+p.summary+"</p>";
+    if(p.requirements&&p.requirements.length){
+      html+="<div class=\"text-xs mb-2\" style=\"color:rgba(255,255,255,0.4)\">Requirements:</div><ul class=\"text-xs space-y-1 mb-3\" style=\"color:rgba(255,255,255,0.7)\">";
+      p.requirements.forEach(function(req){html+="<li>• "+req+"</li>";});
+      html+="</ul>";
+    }
+    html+="<textarea class=\"w-full rounded p-2 text-sm text-white border border-white/10 focus:outline-none focus:border-indigo-400\" style=\"background:rgba(255,255,255,0.1)\" rows=\"2\" placeholder=\"Add your notes...\" data-pathid=\""+p.id+"\" oninput=\"saveNote(this.dataset.pathid,this.value)\">"+note+"</textarea>";
+    html+="</div>";
+  });
+  var c=document.getElementById("intake-cards");
+  if(c)c.innerHTML=html;
+}
+
+function saveNote(pathId,val){__state.notes[pathId]=val;}
+
+function generatePDF(){
+  try{
+    var doc=new window.jspdf.jsPDF();
+    doc.setFontSize(18);doc.text("My Dual Citizenship Plan",14,20);
+    doc.setFontSize(11);doc.text("Generated by dualcitizen.world",14,28);
+    var y=38;
+    var paths=__state.selectedPaths.length>0
+      ?window.__PATHS.filter(function(p){return __state.selectedPaths.indexOf(p.id)>-1;})
+      :__state.results.slice(0,3).map(function(r){return r.path;});
+    paths.forEach(function(p){
+      if(y>260){doc.addPage();y=20;}
+      doc.setFontSize(13);doc.text(p.flag+" "+p.name,14,y);y+=7;
+      doc.setFontSize(10);doc.text("Category: "+p.category+" | Timeline: "+p.timeline+" | Cost: "+p.cost,14,y);y+=6;
+      var lines=doc.splitTextToSize(p.summary,180);
+      doc.text(lines,14,y);y+=lines.length*5+4;
+      if(__state.notes[p.id]){doc.setTextColor(100,100,200);doc.text("Notes: "+__state.notes[p.id],14,y);y+=6;doc.setTextColor(0,0,0);}
+      y+=4;
+    });
+    doc.save("my-citizenship-plan.pdf");
+  }catch(e){alert("PDF error: "+e.message);}
+}
 </script>
 </body>
 </html>
