@@ -271,7 +271,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="form-label">Full Legal Name</label>
-          <input id="p-name" type="text" class="form-input" placeholder="e.g. Joseph Kocchi"/>
+          <input id="p-name" type="text" class="form-input" placeholder="e.g. John Smith"/>
         </div>
         <div>
           <label class="form-label">Date of Birth</label>
@@ -301,7 +301,7 @@
       <div class="mb-2">
         <label class="form-label" style="font-size:1rem;font-weight:700;color:#1F2937">Family &amp; Relative Information <span style="color:#9CA3AF;font-weight:400;font-size:0.82rem">(optional)</span></label>
         <p style="color:#6B7280;font-size:0.8rem;margin-bottom:0.5rem">Tell us about known relatives — grandparents, great-grandparents, their birthplaces and any documents you have. We'll include a personalized records guide in your action plan.</p>
-        <textarea id="p-relatives" class="form-input" rows="5" placeholder="e.g. Grandfather Giovanni Rossi, born in Naples, Italy ~1910. Grandmother Mary O'Brien from County Cork, Ireland ~1915. Father has some Italian documents..."></textarea>
+        <textarea id="p-relatives" class="form-input" rows="5" placeholder="e.g. Grandfather born in Italy around 1910. Grandmother from Ireland around 1915. Any documents or records you already have (naturalization papers, birth certificates, etc.)..."></textarea>
       </div>
     </div>
 
@@ -469,57 +469,89 @@ function renderIntakeCards(){
 }
 function saveNote(pathId,val){__state.notes[pathId]=val;}
 function requestResearchPDF(){
-  var relNotes = (document.getElementById('p-relatives')||{}).value||'';
-  var nm = (document.getElementById('p-name')||{}).value||'';
-  // If research already done, just generate
-  if(window.__relativeResearch && window.__relativeResearch.links && window.__relativeResearch.links.length > 0){
-    generatePDF();
-    return;
-  }
-  // If no relative notes, just generate normally
-  if(!relNotes || relNotes.trim().length < 10){
-    generatePDF();
-    return;
-  }
-  // Show research overlay and signal Claude to do research
-  var overlay = document.getElementById('research-overlay');
-  if(overlay) overlay.style.display='flex';
-  window.__pdfRequest = {
-    relatives: relNotes,
-    name: nm,
-    ancestry: (__state.answers&&__state.answers[0])||[],
-    requestedAt: new Date().toISOString()
-  };
-  // Poll for research completion (Claude will set window.__relativeResearch)
-  var polls = 0;
-  var timer = setInterval(function(){
+  var relNotes=(document.getElementById('p-relatives')||{}).value||'';
+  var nm=(document.getElementById('p-name')||{}).value||'';
+  if(window.__relativeResearch&&window.__relativeResearch.links&&window.__relativeResearch.links.length>0){generatePDF();return;}
+  if(!relNotes||relNotes.trim().length<10){generatePDF();return;}
+  var overlay=document.getElementById('research-overlay');
+  if(overlay)overlay.style.display='flex';
+  window.__pdfRequest={relatives:relNotes,name:nm,ancestry:(__state.answers&&__state.answers[0])||[],requestedAt:new Date().toISOString()};
+  var polls=0;
+  var timer=setInterval(function(){
     polls++;
-    if(window.__relativeResearch && window.__relativeResearch.links){
-      clearInterval(timer);
-      if(overlay) overlay.style.display='none';
-      generatePDF();
+    if(window.__relativeResearch&&window.__relativeResearch.links){clearInterval(timer);if(overlay)overlay.style.display='none';generatePDF();}
+    if(polls>120){clearInterval(timer);if(overlay)overlay.style.display='none';generatePDF();}
+  },1000);
+}
+function updateResearchStatus(msg){var el=document.getElementById('research-status');if(el)el.innerHTML=(el.innerHTML?el.innerHTML+'<br>':'')+'✓ '+msg;}
+function completeResearch(data){window.__relativeResearch=data;}
+
+function applyResearchRanking(results){
+  var rr=window.__relativeResearch;
+  if(!rr||!rr.links||!rr.links.length) return results;
+  // Count confirmed country links (exclude Critical/US Records which are informational)
+  var confirmed={};
+  rr.links.forEach(function(lnk){
+    if(!lnk.country) return;
+    var c=lnk.country.toLowerCase();
+    if(c.indexOf('critical')>-1||c.indexOf('us record')>-1) return;
+    // Map to path keywords
+    ['italian','irish','german','french','british','portuguese','polish','greek','hungarian','romanian','lithuanian','israeli'].forEach(function(kw){
+      if(c.indexOf(kw.substring(0,5))>-1||(kw==='irish'&&c.indexOf('ireland')>-1)||(kw==='german'&&(c.indexOf('germany')>-1||c.indexOf('bavaria')>-1))||(kw==='italian'&&c.indexOf('italy')>-1)){
+        confirmed[kw]=(confirmed[kw]||0)+1;
+      }
+    });
+  });
+  // Check for critical warnings (e.g. naturalization check for Italy)
+  var warnings={};
+  rr.links.forEach(function(lnk){
+    if(lnk.country&&lnk.country.toLowerCase().indexOf('critical')>-1){
+      if(lnk.description&&lnk.description.toLowerCase().indexOf('italian')>-1) warnings['italian']=lnk.title||'Check required before applying';
+      if(lnk.description&&lnk.description.toLowerCase().indexOf('natur')>-1&&!warnings['italian']) warnings['italian']='Verify ancestor naturalization date first';
     }
-    // Timeout after 120 seconds - just generate without research
-    if(polls > 120){
-      clearInterval(timer);
-      if(overlay) overlay.style.display='none';
-      generatePDF();
-    }
-  }, 1000);
+  });
+  window.__researchConfirmed=confirmed;
+  window.__researchWarnings=warnings;
+  // Separate results into confirmed-ancestry paths and others
+  var confirmedPaths=[], otherPaths=[];
+  results.forEach(function(r){
+    var pname=r.path.name.toLowerCase();
+    var isConfirmed=false;
+    Object.keys(confirmed).forEach(function(kw){ if(pname.indexOf(kw)>-1) isConfirmed=true; });
+    if(isConfirmed) confirmedPaths.push(r); else otherPaths.push(r);
+  });
+  // Sort confirmed paths: by number of research links found (most confirmed first), then by ease desc
+  confirmedPaths.sort(function(a,b){
+    var pA=a.path.name.toLowerCase(), pB=b.path.name.toLowerCase();
+    var cntA=0,cntB=0;
+    Object.keys(confirmed).forEach(function(kw){if(pA.indexOf(kw)>-1)cntA=confirmed[kw];if(pB.indexOf(kw)>-1)cntB=confirmed[kw];});
+    if(cntB!==cntA) return cntB-cntA;
+    return (b.path.ease||0)-(a.path.ease||0);
+  });
+  // Re-assign pct: confirmed paths get 100% scaled among themselves + "Research Confirmed" label
+  var combined=confirmedPaths.concat(otherPaths);
+  // Keep original pct for non-confirmed; for confirmed show their original pct but flag as confirmed
+  return combined.map(function(r,i){
+    var pname=r.path.name.toLowerCase();
+    var isConf=false;
+    Object.keys(confirmed).forEach(function(kw){if(pname.indexOf(kw)>-1)isConf=true;});
+    return {path:r.path,score:r.score,pct:r.pct,researchConfirmed:isConf,researchWarning:isConf?warnings[Object.keys(confirmed).find(function(k){return pname.indexOf(k)>-1;})||'']||null:null};
+  });
 }
 
-function updateResearchStatus(msg){
-  var el = document.getElementById('research-status');
-  if(el) el.innerHTML = (el.innerHTML ? el.innerHTML + '<br>' : '') + '&#10003; ' + msg;
-}
-function completeResearch(data){
-  window.__relativeResearch = data;
-}
 function generatePDF(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
 var PW=210,PH=297,M=14,CW=182;
 var pageNum=1;
-function cl(s){if(!s)return '';return String(s).replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g,'').replace(/\s+/g,' ').trim();}
+// Fix: preserve hyphens, replace en-dash/em-dash with hyphen before stripping non-printable chars
+function cl(s){
+  if(!s)return '';
+  return String(s)
+    .replace(/–/g,'-').replace(/—/g,'-').replace(/‒/g,'-')
+    .replace(/[^	
+ -~ -ÿ]/g,'')
+    .replace(/s+/g,' ').trim();
+}
 function footer(n){doc.setFillColor(91,33,182);doc.rect(0,PH-10,PW,10,'F');doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(196,181,253);doc.text('Dual Citizenship Action Plan | Informational Only | Consult a Qualified Immigration Attorney',M,PH-4);doc.setTextColor(255,255,255);doc.text('Page '+n,PW-M,PH-4,{align:'right'});doc.setTextColor(31,41,55);}
 function wt(txt,x,y,mw,lh){var ls=doc.splitTextToSize(cl(txt),mw||CW);doc.text(ls,x,y);return y+ls.length*(lh||4.8);}
 function sh(title,y,r,g,b){r=r||91;g=g||33;b=b||182;doc.setFillColor(r,g,b);doc.rect(0,y,PW,11,'F');doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(255,255,255);doc.text(cl(title),M,y+7.5);doc.setTextColor(31,41,55);return y+16;}
@@ -528,99 +560,190 @@ var nm=cl((document.getElementById('p-name')||{}).value||'Client');
 var em=cl((document.getElementById('p-email')||{}).value||'');
 var rel=cl((document.getElementById('p-relatives')||{}).value||'');
 var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-var results=__state.results||[];
+var rawResults=__state.results||[];
+// Apply research-based re-ranking if research is available
+var results=applyResearchRanking(rawResults);
 var top=results[0]?results[0].path:null;
+var hasResearch=!!(window.__relativeResearch&&window.__relativeResearch.links&&window.__relativeResearch.links.length);
+var confirmedCount=window.__researchConfirmed?Object.keys(window.__researchConfirmed).length:0;
 // PAGE 1: COVER
 doc.setFillColor(67,20,140);doc.rect(0,0,PW,75,'F');
 doc.setFillColor(91,33,182);doc.rect(0,10,PW,55,'F');
 doc.setFillColor(109,40,217);doc.rect(0,55,PW,20,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(26);doc.setTextColor(255,255,255);doc.text('DUAL CITIZENSHIP',PW/2,28,{align:'center'});
 doc.setFontSize(20);doc.text('ACTION PLAN',PW/2,40,{align:'center'});
-doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(196,181,253);doc.text('Your Personalized Roadmap to a Second Passport',PW/2,52,{align:'center'});
+doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(196,181,253);
+var subtitle=hasResearch?'AI-Researched Roadmap - Paths Prioritized by Confirmed Ancestry':'Your Personalized Roadmap to a Second Passport';
+doc.text(subtitle,PW/2,52,{align:'center'});
 var y=83;
-doc.setFillColor(243,232,255);doc.rect(M,y,CW,26,'F');
-doc.setFillColor(91,33,182);doc.rect(M,y,4,26,'F');
+// Name box
+doc.setFillColor(243,232,255);doc.rect(M,y,CW,26,'F');doc.setFillColor(91,33,182);doc.rect(M,y,4,26,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(109,40,217);doc.text('PREPARED FOR',M+8,y+7);
 doc.setFontSize(15);doc.setTextColor(31,41,55);doc.text(nm.substring(0,40),M+8,y+15);
-doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);
-doc.text(cl(em?em+' | '+today:today),M+8,y+21.5);
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);doc.text(cl(em?em+' | '+today:today),M+8,y+21.5);
 y+=32;
+// Stats row
 var anc=0,res=0,inv=0;results.forEach(function(r){if(r.path.category==='ancestry')anc++;else if(r.path.category==='residency')res++;else inv++;});
-var stats=[{lbl:'PATHS FOUND',val:''+results.length},{lbl:'ANCESTRY PATHS',val:''+anc},{lbl:'RESIDENCY PATHS',val:''+res},{lbl:'INVESTMENT PATHS',val:''+inv}];
+var stats=[{lbl:'PATHS ANALYZED',val:''+results.length},{lbl:'ANCESTRY',val:''+anc},{lbl:'RESIDENCY',val:''+res},{lbl:'INVESTMENT',val:''+inv}];
 var sw=(CW-6)/4;
 stats.forEach(function(s,i){var sx=M+i*(sw+2);doc.setFillColor(245,243,255);doc.rect(sx,y,sw,20,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(109,40,217);doc.text(s.lbl,sx+sw/2,y+7,{align:'center'});doc.setFontSize(16);doc.setTextColor(91,33,182);doc.text(s.val,sx+sw/2,y+16,{align:'center'});});
 y+=26;
-if(top){doc.setFillColor(91,33,182);doc.rect(M,y,CW,18,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(196,181,253);doc.text('YOUR TOP MATCH',M+5,y+6);doc.setFontSize(12);doc.setTextColor(255,255,255);doc.text(cl(top.name).substring(0,48),M+5,y+13);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(196,181,253);doc.text(results[0].pct+'% fit | '+cl(top.time||top.timeline||'')+'  |  '+cl(top.cost||''),PW-M,y+13,{align:'right'});y+=24;}
-y=chk(y,42);doc.setFillColor(236,253,245);doc.rect(M,y,CW,42,'F');doc.setFillColor(5,150,105);doc.rect(M,y,4,42,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(5,150,105);doc.text('HOW TO USE THIS PLAN',M+8,y+8);
-doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);
-var howto=['1. START HERE (Section 1): Complete the 5 universal actions this week and this month - they apply to every program.','2. REVIEW YOUR OPTIONS (Section 2): Study the ranked paths table to understand your full range of citizenship options.','3. DIVE DEEP (Section 3-7): Read your personalized action plans with step-by-step guides for your top 5 matching paths.','4. FIND YOUR RECORDS (Section 8): Use the Ancestry Records Guide with personalized archive sources and your family notes.','5. TRACK PROGRESS (Section 9): Print the Document Checklist to track every certificate, apostille, and translation needed.'];
-howto.forEach(function(h,i){doc.text(cl(h),M+8,y+16+i*5.5);});
+// Top match (now research-aware)
+if(top){
+  doc.setFillColor(91,33,182);doc.rect(M,y,CW,20,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(196,181,253);
+  var topLabel=results[0].researchConfirmed?'YOUR TOP MATCH - CONFIRMED ANCESTRY FOUND':'YOUR TOP MATCH';
+  doc.text(topLabel,M+5,y+6);
+  doc.setFontSize(13);doc.setTextColor(255,255,255);doc.text(cl(top.name).substring(0,48),M+5,y+13);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(196,181,253);
+  doc.text(cl(top.time||top.timeline||'') + '  |  ' + cl(top.cost||''),PW-M,y+13,{align:'right'});
+  if(results[0].researchConfirmed){
+    doc.setFillColor(5,150,105);doc.rect(M,y+14,CW,6,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(255,255,255);
+    var warn=results[0].researchWarning;
+    var confMsg=warn?'Note: '+warn:'Ancestor records found online - see Research Guide section for archive sources';
+    doc.text(cl(confMsg).substring(0,90),M+5,y+18);
+  }
+  y+=26;
+}
+// Research insight box (fills dead whitespace when research is available)
+if(hasResearch&&confirmedCount>0){
+  var conf=window.__researchConfirmed;
+  var confNames=Object.keys(conf).map(function(k){return k.charAt(0).toUpperCase()+k.slice(1);});
+  y=chk(y,52);
+  doc.setFillColor(236,253,245);doc.rect(M,y,CW,50,'F');doc.setFillColor(5,150,105);doc.rect(M,y,4,50,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(5,150,105);doc.text('AI RESEARCH SUMMARY',M+8,y+8);
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(31,41,55);
+  doc.text('Confirmed Ancestral Connections Found: '+confNames.join(', '),M+8,y+15);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);
+  var rlinks=window.__relativeResearch.links.filter(function(l){return l.country&&l.country.toLowerCase().indexOf('critical')===-1&&l.country.toLowerCase().indexOf('us record')===-1;});
+  doc.text('Official archives searched: '+rlinks.length+' sources identified across '+confirmedCount+' countries.',M+8,y+21);
+  doc.text('The paths below have been RE-RANKED based on your confirmed family connections,',M+8,y+27);
+  doc.text('not just quiz score. Paths with confirmed ancestors and available records appear first.',M+8,y+33);
+  var warnKeys=window.__researchWarnings?Object.keys(window.__researchWarnings):[];
+  if(warnKeys.length>0){
+    doc.setFillColor(255,247,237);doc.rect(M+4,y+37,CW-8,10,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(217,119,6);
+    doc.text('ACTION REQUIRED BEFORE APPLYING: '+cl(window.__researchWarnings[warnKeys[0]]).substring(0,80),M+8,y+43.5);
+  }
+  y+=56;
+} else {
+  // How to use box (when no research)
+  y=chk(y,42);doc.setFillColor(236,253,245);doc.rect(M,y,CW,42,'F');doc.setFillColor(5,150,105);doc.rect(M,y,4,42,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(5,150,105);doc.text('HOW TO USE THIS PLAN',M+8,y+8);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);
+  var howto=['1. START HERE (Section 1): Complete the 5 universal actions this week - they apply to every program.','2. REVIEW YOUR OPTIONS (Section 2): Study the ranked paths table to understand your full range of options.','3. DIVE DEEP (Section 3+): Read personalized action plans with step-by-step guides for your top matching paths.','4. FIND YOUR RECORDS (Ancestry Guide): Use the personalized archive sources and family notes section.','5. TRACK PROGRESS (Checklist): Print the Document Checklist to track every certificate and apostille needed.'];
+  howto.forEach(function(h,i){doc.text(cl(h),M+8,y+16+i*5.5);});
+  y+=48;
+}
 footer(pageNum);
-// PAGE 2: UNIVERSAL FIRST STEPS
+// PAGE 2: UNIVERSAL STEPS
 doc.addPage();pageNum++;y=18;
 y=sh('SECTION 1: START HERE - 5 UNIVERSAL ACTIONS (Required for Every Program)',y);
 doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(107,114,128);doc.text('Complete these 5 actions first -- they are prerequisites for virtually every citizenship and residency program worldwide.',M,y);y+=9;
 var usteps=[
-{t:'Order Certified Copies of All Vital Records',d:'Request certified long-form birth certificates for yourself, your parents, and your grandparents. Also collect marriage and divorce certificates for every generation. These documents are the foundation of every citizenship application -- ancestry or otherwise. Order extras, as you will need multiple certified originals for different programs and apostilles.',tm:'This Week'},
-{t:'Obtain an FBI Background Check (Apostilled)',d:'Submit fingerprints to the FBI Identity History Summary Check service online. When received, send the document to your state Secretary of State office for an apostille stamp. This process takes 8-14 weeks total, so start immediately. Nearly every citizenship and residency program requires this document, and delays here will delay your entire application.',tm:'This Week'},
-{t:'Open a Dedicated Citizenship Savings Fund',d:'Establish a separate savings account specifically earmarked for citizenship costs: government fees, attorney fees, translation fees, apostille fees, and travel. Even ancestry programs cost $1,000-$5,000+ in out-of-pocket expenses before you are done. Having dedicated funds on hand prevents costly application delays when fees come due.',tm:'This Month'},
-{t:'Schedule Consultations with 2-3 Specialists',d:'Get free or paid consultations with immigration attorneys who specialize in your top 1-2 citizenship paths. Many attorneys offer free 30-minute initial consultations. A good specialist will identify issues early and save you years of mistakes. Budget $2,000-$5,000 for professional legal guidance. Always ask about their specific experience with your target country.',tm:'This Month'},
-{t:'Build a Document Tracking System',d:'Create a spreadsheet or folder system tracking every document: what it is, where to request it, when ordered, when received, apostille status, and translation status. Citizenship applications require 10-30+ individual documents across multiple generations. Without a tracking system, you will lose track of what you have and restart -- which can cost months and hundreds of dollars.',tm:'This Month'}
+{t:'Order Certified Copies of All Vital Records',d:'Request certified long-form birth certificates for yourself, your parents, and your grandparents. Also collect marriage and divorce certificates for every generation. These are the foundation of every citizenship application. Order extras -- you will need multiple certified originals for apostilles and different programs.',tm:'This Week'},
+{t:'Obtain an FBI Background Check (Apostilled)',d:'Submit fingerprints to the FBI Identity History Summary Check service. When received, send to your state Secretary of State for an apostille stamp. This process takes 8-14 weeks total, so start immediately. Nearly every citizenship and residency program requires this document.',tm:'This Week'},
+{t:'Open a Dedicated Citizenship Savings Fund',d:'Set up a separate savings account earmarked for citizenship costs: government fees, attorney fees, translation fees, apostille fees, and travel. Even ancestry programs cost $1,000-$5,000+ out of pocket. Dedicated funds prevent costly delays when fees come due.',tm:'This Month'},
+{t:'Schedule Consultations with 2-3 Specialists',d:'Get consultations with immigration attorneys who specialize in your top 1-2 citizenship paths. Many offer free 30-minute consultations. A specialist will identify issues early and save years of mistakes. Budget $2,000-$5,000 for professional guidance.',tm:'This Month'},
+{t:'Build a Document Tracking System',d:'Create a spreadsheet tracking every document: what it is, where to request it, when ordered, when received, apostille status, and translation status. Applications require 10-30+ documents across multiple generations. Organization prevents costly restarts.',tm:'This Month'}
 ];
 usteps.forEach(function(s,i){
 y=chk(y,36);
 doc.setFillColor(91,33,182);doc.circle(M+5,y+6,5.5,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);doc.text(''+(i+1),M+5,y+8,{align:'center'});
-doc.setFillColor(243,232,255);doc.rect(PW-M-34,y,34,8,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(109,40,217);doc.text(s.tm,PW-M-17,y+5.5,{align:'center'});
+doc.setFillColor(243,232,255);doc.rect(PW-M-34,y,34,8,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(109,40,217);doc.text(s.tm,PW-M-17,y+5.5,{align:'center'});
 doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(31,41,55);doc.text(s.t,M+14,y+6);
-doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);
-var ls=doc.splitTextToSize(s.d,CW-18);doc.text(ls,M+14,y+12);
-y+=12+ls.length*4.3+6;
-if(i<4){doc.setDrawColor(229,231,235);doc.line(M+14,y-3,PW-M,y-3);}
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);var ls=doc.splitTextToSize(s.d,CW-18);doc.text(ls,M+14,y+12);
+y+=12+ls.length*4.3+6;if(i<4){doc.setDrawColor(229,231,235);doc.line(M+14,y-3,PW-M,y-3);}
 });
 footer(pageNum);
 // PAGE 3: RANKED TABLE
 doc.addPage();pageNum++;y=18;
-y=sh('SECTION 2: YOUR RANKED CITIZENSHIP PATHS ('+results.length+' Total Programs Analyzed)',y);
-doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);doc.text('All paths ranked by compatibility with your quiz answers. Higher match % = stronger personal fit for your situation and goals.',M,y);y+=8;
-var cols=[{l:'#',w:8},{l:'Country & Program Name',w:66},{l:'Type',w:22},{l:'Match',w:16},{l:'Ease',w:14},{l:'Timeline',w:30},{l:'Est. Cost',w:26}];
+var rankTitle=hasResearch?'SECTION 2: RANKED PATHS - RE-ORDERED BY CONFIRMED ANCESTRY + COMPATIBILITY':'SECTION 2: YOUR RANKED CITIZENSHIP PATHS ('+results.length+' Total Programs Analyzed)';
+y=sh(rankTitle,y);
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);
+var rankNote=hasResearch
+  ?'Paths with confirmed ancestor records found online appear first (green). Remaining paths ranked by quiz compatibility.'
+  :'All paths ranked by compatibility with your quiz answers. Higher match % = stronger personal fit.';
+doc.text(rankNote,M,y);y+=8;
+// Table header
+var cols=[{l:'#',w:8},{l:'Country & Program Name',w:58},{l:'Type',w:22},{l:'Match',w:16},{l:'Ease',w:14},{l:'Timeline',w:34},{l:'Est. Cost',w:30}];
 doc.setFillColor(91,33,182);doc.rect(M,y,CW,8,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(255,255,255);
 var cx=M;cols.forEach(function(c){doc.text(c.l,cx+2,y+5.5);cx+=c.w;});y+=8;
 results.forEach(function(r,i){
-y=chk(y,8);
-if(i%2===0){doc.setFillColor(249,246,255);doc.rect(M,y,CW,7.5,'F');}
-doc.setFont('helvetica',i===0?'bold':'normal');doc.setFontSize(7.5);
-cx=M;var pct=r.pct;
-var rv=[''+(i+1),cl(r.path.name).substring(0,38),(r.path.category||'').charAt(0).toUpperCase()+(r.path.category||'').slice(1),pct+'%',(r.path.ease||'?')+'/10',cl(r.path.time||r.path.timeline||'N/A').substring(0,18),cl(r.path.cost||'N/A').substring(0,16)];
-cols.forEach(function(c,ci){
-if(ci===3){var g=pct>=75?[5,150,105]:pct>=50?[217,119,6]:[107,114,128];doc.setTextColor(g[0],g[1],g[2]);}else{doc.setTextColor(31,41,55);}
-doc.text(rv[ci],cx+2,y+5);cx+=c.w;
-});y+=7.5;
+  y=chk(y,8);
+  // Row background: confirmed ancestry paths get green tint
+  if(r.researchConfirmed){doc.setFillColor(236,253,245);}
+  else if(i%2===0){doc.setFillColor(249,246,255);}
+  else{doc.setFillColor(255,255,255);}
+  doc.rect(M,y,CW,7.5,'F');
+  // Confirmed badge strip on left
+  if(r.researchConfirmed){doc.setFillColor(5,150,105);doc.rect(M,y,3,7.5,'F');}
+  doc.setFont('helvetica',i<3&&r.researchConfirmed?'bold':'normal');doc.setFontSize(7.5);
+  cx=M;var pct=r.pct;
+  // Fix timeline and cost display - use cl() which now preserves hyphens
+  var timeStr=cl(r.path.time||r.path.timeline||'N/A');
+  var costStr=cl(r.path.cost||'N/A');
+  var rv=[''+(i+1),cl(r.path.name).substring(0,35),(r.path.category||'').charAt(0).toUpperCase()+(r.path.category||'').slice(1),pct+'%',(r.path.ease||'?')+'/10',timeStr.substring(0,22),costStr.substring(0,18)];
+  cols.forEach(function(c,ci){
+    if(ci===3){var g=r.researchConfirmed?[5,150,105]:pct>=75?[5,150,105]:pct>=50?[217,119,6]:[107,114,128];doc.setTextColor(g[0],g[1],g[2]);}
+    else{doc.setTextColor(31,41,55);}
+    doc.text(rv[ci],cx+2,y+5);cx+=c.w;
+  });
+  y+=7.5;
 });
+// Legend
+y+=3;doc.setFillColor(236,253,245);doc.rect(M,y,90,7,'F');doc.setFillColor(5,150,105);doc.rect(M,y,3,7,'F');
+doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(5,150,105);doc.text('Green rows = Confirmed ancestor records found via online research',M+6,y+4.5);
+y+=10;
 footer(pageNum);
-// PAGES 4-8: TOP 5 PATH DETAIL PLANS
+// PAGES 4-8: TOP 5 PATH ACTION PLANS (in research-re-ranked order)
 var topR=results.slice(0,5);
 topR.forEach(function(r,ri){
 doc.addPage();pageNum++;var p=r.path;var pn=cl(p.name);
-doc.setFillColor(91,33,182);doc.rect(0,0,PW,20,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(196,181,253);doc.text('DETAILED ACTION PLAN '+(ri+1)+' OF '+topR.length+' | '+(p.category||'').toUpperCase()+' PROGRAM',M,8);
+// Header - green if confirmed ancestry
+var hdrColor=r.researchConfirmed?[5,120,87]:[91,33,182];
+doc.setFillColor(hdrColor[0],hdrColor[1],hdrColor[2]);doc.rect(0,0,PW,20,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(196,181,253);
+var planLabel='DETAILED ACTION PLAN '+(ri+1)+' OF '+topR.length+' | '+(p.category||'').toUpperCase()+' PROGRAM';
+if(r.researchConfirmed) planLabel+=' | CONFIRMED ANCESTRY';
+doc.text(planLabel,M,8);
 doc.setFontSize(13);doc.setTextColor(255,255,255);doc.text(pn.substring(0,52),M,16);
 y=28;
-var qs=[{k:'COMPATIBILITY',v:r.pct+'%'},{k:'EASE RATING',v:(p.ease||'?')+'/10'},{k:'TIMELINE',v:cl(p.time||p.timeline||'Varies').substring(0,18)},{k:'EST. COST',v:cl(p.cost||'Varies').substring(0,18)}];
+// Warning banner if research found a critical check needed
+if(r.researchWarning){
+  doc.setFillColor(255,237,213);doc.rect(M,y,CW,10,'F');doc.setFillColor(217,119,6);doc.rect(M,y,4,10,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(146,64,14);
+  doc.text('IMPORTANT CHECK REQUIRED: '+cl(r.researchWarning).substring(0,90),M+8,y+6.5);
+  y+=13;
+}
+// Quick stats
+var qs=[{k:'COMPATIBILITY',v:r.pct+'%'+(r.researchConfirmed?' +CONFIRMED':'')},{k:'EASE RATING',v:(p.ease||'?')+'/10'},{k:'TIMELINE',v:cl(p.time||p.timeline||'Varies').substring(0,18)},{k:'EST. COST',v:cl(p.cost||'Varies').substring(0,18)}];
 var qw=(CW-6)/4;
-qs.forEach(function(q,qi){var qx=M+qi*(qw+2);doc.setFillColor(243,232,255);doc.rect(qx,y,qw,15,'F');doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(109,40,217);doc.text(q.k,qx+qw/2,y+6,{align:'center'});doc.setFontSize(10);doc.setTextColor(31,41,55);doc.text(cl(q.v),qx+qw/2,y+12,{align:'center'});});
+qs.forEach(function(q,qi){
+  var qx=M+qi*(qw+2);
+  doc.setFillColor(qi===0&&r.researchConfirmed?[236,253,245]:[243,232,255]);
+  if(qi===0&&r.researchConfirmed)doc.setFillColor(236,253,245); else doc.setFillColor(243,232,255);
+  doc.rect(qx,y,qw,15,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(qi===0&&r.researchConfirmed?5:109,qi===0&&r.researchConfirmed?120:40,qi===0&&r.researchConfirmed?87:217);
+  doc.text(q.k,qx+qw/2,y+6,{align:'center'});
+  doc.setFontSize(qi===0?9:10);doc.setTextColor(31,41,55);
+  doc.text(cl(q.v).substring(0,20),qx+qw/2,y+12,{align:'center'});
+});
 y+=21;
 if(p.summary){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);y=wt(p.summary,M,y,CW,4.5);y+=4;}
 // Steps
-y=chk(y,22);doc.setFillColor(109,40,217);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('STEP-BY-STEP ACTION PLAN',M+3,y+5);y+=9;
+y=chk(y,22);doc.setFillColor(r.researchConfirmed?5:109,r.researchConfirmed?120:40,r.researchConfirmed?87:217);doc.rect(M,y,CW,7,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('STEP-BY-STEP ACTION PLAN',M+3,y+5);y+=9;
 var steps=p.steps||(p.first_step?[p.first_step]:['Consult a specialized immigration attorney for this program','Gather all required documents listed below','Submit application through official government channels']);
 steps.forEach(function(s,si){
-y=chk(y,16);doc.setFillColor(91,33,182);doc.rect(M,y,7,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(255,255,255);doc.text(''+(si+1),M+3.5,y+5,{align:'center'});
-doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
-var ls=doc.splitTextToSize(cl(s),CW-12);doc.text(ls,M+10,y+5);y+=Math.max(9,ls.length*4.5+3);
+  y=chk(y,16);
+  doc.setFillColor(r.researchConfirmed?5:91,r.researchConfirmed?120:33,r.researchConfirmed?87:182);doc.rect(M,y,7,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(255,255,255);doc.text(''+(si+1),M+3.5,y+5,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
+  var ls=doc.splitTextToSize(cl(s),CW-12);doc.text(ls,M+10,y+5);y+=Math.max(9,ls.length*4.5+3);
 });
 y+=2;
 // Documents
@@ -630,156 +753,147 @@ docs.forEach(function(d){y=chk(y,8);doc.setFillColor(236,253,245);doc.rect(M,y,3
 y+=2;
 // Benefits
 y=chk(y,20);doc.setFillColor(217,119,6);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('KEY BENEFITS OF THIS CITIZENSHIP',M+3,y+5);y+=9;
-var bens=p.benefits||['Second passport for visa-free travel','Protection against political instability','Tax planning and diversification opportunities'];
+var bens=p.benefits||['Second passport for visa-free travel','Protection against political instability','Tax planning and diversification'];
 bens.forEach(function(b){y=chk(y,8);doc.setFillColor(255,247,237);doc.rect(M,y,3,4,'F');doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);var ls=doc.splitTextToSize(cl(b),CW-10);doc.text(ls,M+7,y+3.5);y+=Math.max(6,ls.length*4.3+2);});
 // Gov resource
 if(p.govUrl){y=chk(y,18);y+=3;doc.setFillColor(239,246,255);doc.rect(M,y,CW,16,'F');doc.setFillColor(37,99,235);doc.rect(M,y,4,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(37,99,235);doc.text('OFFICIAL GOVERNMENT RESOURCE',M+8,y+6);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);if(p.govName)doc.text(cl(p.govName),M+8,y+11);doc.setTextColor(37,99,235);doc.text(cl(p.govUrl).substring(0,75),M+8,y+15.5);}
 footer(pageNum);
 });
-// ANCESTRY RECORDS GUIDE PAGE
+// ANCESTRY RECORDS GUIDE
 doc.addPage();pageNum++;y=18;
 y=sh('SECTION 3: ANCESTRY RECORDS RESEARCH GUIDE',y);
 var aarch={
-ancestry_uk:{c:'United Kingdom',arch:'General Register Office (GRO)',url:'https://www.gro.gov.uk',tip:'Order UK birth, marriage, and death certificates online from GRO. Scottish records are at National Records of Scotland (nrscotland.gov.uk). Northern Irish records at GRONI (groni.gov.uk). Pre-1837 records are in Church of England parish registers at county archives.'},
-ancestry_ireland:{c:'Ireland',arch:'General Register Office Ireland & IrishGenealogy.ie',url:'https://www.irishgenealogy.ie',tip:'Civil registration records from 1864 are free to search at IrishGenealogy.ie. Catholic church records from the 1600s are also online. Contact GRO Dublin for certified copies. Church of Ireland (Protestant) records are at the Representative Church Body Library.'},
-ancestry_france:{c:'France',arch:'Archives Departementales & FranceArchives',url:'https://francearchives.fr',tip:'French civil records are held at departmental archives (Archives Departementales). Use FranceArchives.fr to locate the right office. Contact the Mairie (town hall) of your ancestors commune for birth certificates. Pre-1792 records are in Catholic church registers at local archives.'},
-ancestry_italy:{c:'Italy',arch:'Italian Comuni (Town Halls) & Archivio di Stato',url:'https://antenati.san.beniculturali.it',tip:'Civil records are held at the Comune (town hall) of each municipality -- contact the Ufficio Anagrafe directly. Pre-1865 records are at State Archives (Archivio di Stato). Use Antenati.san.beniculturali.it for free access to millions of digitized Italian genealogy records.'},
-ancestry_germany:{c:'Germany',arch:'Standesamt (Civil Registry) & Church Archives',url:'https://matricula-online.eu',tip:'German civil records from 1874 are at local Standesamt offices. Earlier records are in church (Kirchenbuch) archives. Use Matricula Online for Catholic church records free online. The German Federal Archive (Bundesarchiv at bundesarchiv.de) holds emigration and naturalization records.'},
-ancestry_portugal:{c:'Portugal',arch:'Arquivo Nacional Torre do Tombo (ANTT)',url:'https://digitarq.arquivos.pt',tip:'Portuguese civil records from 1832 are at district archives (Arquivos Distritais). Church records from the 1500s are digitized at ANTT online (digitarq.arquivos.pt). Contact the Conservatoria do Registo Civil in your ancestors municipality for certified copies.'},
-ancestry_poland:{c:'Poland',arch:'Polish State Archives (AP) & USC Offices',url:'https://szukajwarchiwach.gov.pl',tip:'Use Szukaj w Archiwach (szukajwarchiwach.gov.pl) to search Polish archives online for free. Civil records (akty stanu cywilnego) from 1808 are at USC offices. Earlier records are at Diocesan Archives. FamilySearch also has extensive Polish records digitized and indexed.'},
-ancestry_greece:{c:'Greece',arch:'Lixiarcheio (Civil Registry) & General State Archives',url:'https://gak.gov.gr',tip:'Greek civil records from 1925 are at local Lixiarcheio offices. Pre-1925 records are in church archives and General State Archives (GAK: gak.gov.gr). Contact the Dimos (municipality) where your ancestor was born. The Greek Diaspora Archives in Piraeus may hold emigration records.'},
-ancestry_hungary:{c:'Hungary',arch:'Hungarian National Archives (MNL) & Hungaricana',url:'https://archives.hungaricana.hu',tip:'Hungarian civil records from 1895 are at local civil registry offices. Church records going back centuries are available free at Hungaricana (archives.hungaricana.hu). The National Archives (MNL) holds historical records. Many Hungarian records are also on FamilySearch.'},
-ancestry_baltic:{c:'Lithuania and Baltic States',arch:'Lithuanian State Historical Archives (LCVA)',url:'https://www.archyvai.lt',tip:'Lithuanian civil records are at LCVA in Vilnius (archyvai.lt). Estonian records are at the National Archives of Estonia (ra.ee). Latvian records are at the Latvian State Historical Archives (arhivi.lv). Jewish records from the Baltic region may be at Yad Vashem or JewishGen.org.'},
-ancestry_eastern:{c:'Romania and Eastern Europe',arch:'Romanian National Archives (ANR)',url:'https://arhivelenationale.ro',tip:'Romanian civil records from 1865 are at county archives (Serviciul Judetean ANR). Church records are at local churches and diocesan archives. FamilySearch (familysearch.org) has extensively digitized Eastern European records and is free to use. Also check Ancestry.com for Eastern European collections.'},
-ancestry_jewish:{c:'Israel and Jewish Heritage',arch:'Yad Vashem, JewishGen, and JRI-Poland',url:'https://www.jewishgen.org',tip:'JewishGen (jewishgen.org) is the top resource for Jewish genealogy worldwide -- free searchable databases. Yad Vashem (yadvashem.org) holds Holocaust-era records. YIVO Institute holds Eastern European Jewish records. Local Jewish genealogical societies and synagogue archives can assist with regional research.'},
-ancestry_latin:{c:'Latin America',arch:'National Archives by Country & FamilySearch',url:'https://www.familysearch.org',tip:'Use FamilySearch (familysearch.org) for free access to digitized Latin American civil and church records. Key national archives: Mexico -- Archivo General de la Nacion (agn.gob.mx); Argentina -- Archivo General de la Nacion (archivo.cancilleria.gob.ar); Brazil -- Arquivo Nacional (an.gov.br).'}
+ancestry_uk:{c:'United Kingdom',arch:'General Register Office (GRO)',url:'https://www.gro.gov.uk',tip:'Order UK birth, marriage, and death certificates online from GRO. Scottish records at National Records of Scotland (nrscotland.gov.uk). Northern Irish records at GRONI (groni.gov.uk). Pre-1837 records are in Church of England parish registers held at county archives.'},
+ancestry_ireland:{c:'Ireland',arch:'General Register Office Ireland and IrishGenealogy.ie',url:'https://www.irishgenealogy.ie',tip:'Civil registration records from 1864 are FREE to search and download at IrishGenealogy.ie. Catholic church records from the 1600s also available online. Contact GRO Dublin for certified copies needed for the Foreign Births Registration (FBR) citizenship application.'},
+ancestry_france:{c:'France',arch:'Archives Departementales and FranceArchives',url:'https://francearchives.fr',tip:'French civil records are held at departmental archives. Use FranceArchives.fr to locate the right office. Contact the Mairie (town hall) of your ancestor's commune for birth certificates. Pre-1792 records are in Catholic church registers at local archives.'},
+ancestry_italy:{c:'Italy',arch:'Italian Comuni (Town Halls) and Archivio di Stato',url:'https://antenati.cultura.gov.it/?lang=en',tip:'The official Italian state archives portal (Antenati) has 71+ million FREE digitized civil records from 1809 onward. Search by commune, record type (Nati = births), and year. For certified copies for citizenship applications, contact the Ufficio Anagrafe at the specific Comune where your ancestor was born.'},
+ancestry_germany:{c:'Germany',arch:'Standesamt (Civil Registry) and Church Archives',url:'https://matricula-online.eu',tip:'German civil records from 1874 are at local Standesamt offices. Earlier records are in church (Kirchenbuch) archives. Use Matricula Online for FREE Bavarian and Catholic church records. The German Federal Archive (Bundesarchiv at bundesarchiv.de) holds emigration and naturalization records critical for citizenship claims.'},
+ancestry_portugal:{c:'Portugal',arch:'Arquivo Nacional Torre do Tombo (ANTT)',url:'https://digitarq.arquivos.pt',tip:'Portuguese civil records from 1832 are at district archives (Arquivos Distritais). Church records from the 1500s are digitized FREE at ANTT online (digitarq.arquivos.pt). Contact the Conservatoria do Registo Civil in your ancestor's municipality for certified copies.'},
+ancestry_poland:{c:'Poland',arch:'Polish State Archives (AP) and USC Offices',url:'https://szukajwarchiwach.gov.pl',tip:'Use Szukaj w Archiwach (szukajwarchiwach.gov.pl) to search Polish archives online for FREE. Civil records from 1808 are at USC offices. Earlier records are at Diocesan Archives. FamilySearch also has extensive digitized Polish records.'},
+ancestry_greece:{c:'Greece',arch:'Lixiarcheio (Civil Registry) and General State Archives',url:'https://gak.gov.gr',tip:'Greek civil records from 1925 are at local Lixiarcheio offices. Pre-1925 records are in church archives and General State Archives (gak.gov.gr). Contact the Dimos (municipality) where your ancestor was born.'},
+ancestry_hungary:{c:'Hungary',arch:'Hungarian National Archives (MNL) and Hungaricana',url:'https://archives.hungaricana.hu',tip:'Hungarian civil records from 1895 are at local civil registry offices. Church records going back centuries are FREE at Hungaricana (archives.hungaricana.hu). Many Hungarian records are also on FamilySearch.'},
+ancestry_baltic:{c:'Lithuania and Baltic States',arch:'Lithuanian State Historical Archives (LCVA)',url:'https://www.archyvai.lt',tip:'Lithuanian civil records are at LCVA in Vilnius (archyvai.lt). Estonian records at the National Archives of Estonia (ra.ee). Latvian records at the Latvian State Historical Archives (arhivi.lv). Jewish Baltic records may be at Yad Vashem or JewishGen.org.'},
+ancestry_eastern:{c:'Romania and Eastern Europe',arch:'Romanian National Archives (ANR)',url:'https://arhivelenationale.ro',tip:'Romanian civil records from 1865 are at county archives (Serviciul Judetean ANR). FamilySearch (familysearch.org) has extensively digitized Eastern European records and is FREE to use.'},
+ancestry_jewish:{c:'Israel and Jewish Heritage',arch:'Yad Vashem, JewishGen, and JRI-Poland',url:'https://www.jewishgen.org',tip:'JewishGen (jewishgen.org) is the top FREE resource for Jewish genealogy worldwide. Yad Vashem (yadvashem.org) holds Holocaust-era records. YIVO Institute holds Eastern European Jewish records.'},
+ancestry_latin:{c:'Latin America',arch:'National Archives by Country and FamilySearch',url:'https://www.familysearch.org',tip:'Use FamilySearch (FREE) for digitized Latin American civil and church records. Key archives: Mexico - Archivo General de la Nacion (agn.gob.mx); Argentina - Archivo General de la Nacion; Brazil - Arquivo Nacional (an.gov.br).'}
 };
 var ancVals=(__state.answers&&__state.answers[0])||[];
 doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(107,114,128);
 if(ancVals.length>0&&ancVals[0]!=='no_ancestry'){
-doc.text('Based on your ancestry selections, below are the official archives and expert tips for finding records in each country:',M,y);y+=9;
-ancVals.forEach(function(av){
-var info=aarch[av];if(!info)return;
-y=chk(y,32);
-doc.setFillColor(243,232,255);doc.rect(M,y,CW,30,'F');
-doc.setFillColor(91,33,182);doc.rect(M,y,4,30,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(31,41,55);doc.text(info.c+' Records',M+8,y+7);
-doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(109,40,217);doc.text('Official Archive: '+info.arch,M+8,y+12);
-doc.setTextColor(37,99,235);doc.text(info.url,M+8,y+17);
-doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(75,85,99);
-var tls=doc.splitTextToSize(info.tip,CW-14);doc.text(tls,M+8,y+22);
-y+=34;
-});
-}else{
-doc.text('No specific ancestry countries selected. If you discover ancestral connections, visit FamilySearch.org or contact',M,y);
-doc.text('the national archives of the relevant country to request genealogy records and research your family history.',M,y+5);y+=14;
+  doc.text('Based on your ancestry selections, here are the official archives and expert tips for each country:',M,y);y+=9;
+  ancVals.forEach(function(av){
+    var info=aarch[av];if(!info)return;
+    y=chk(y,32);
+    doc.setFillColor(243,232,255);doc.rect(M,y,CW,30,'F');doc.setFillColor(91,33,182);doc.rect(M,y,4,30,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(31,41,55);doc.text(info.c+' Records',M+8,y+7);
+    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(109,40,217);doc.text('Official Archive: '+info.arch,M+8,y+12);
+    doc.setTextColor(37,99,235);doc.text(info.url,M+8,y+17);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(75,85,99);
+    var tls=doc.splitTextToSize(info.tip,CW-14);doc.text(tls,M+8,y+22);y+=34;
+  });
+} else {
+  doc.text('No specific ancestry selected. If you discover connections, visit FamilySearch.org or contact the national archives of the relevant country.',M,y);y+=12;
 }
-// FAMILY NOTES SECTION
+// Family notes
 if(rel&&rel.length>5){
-y=chk(y,50);
-doc.setFillColor(239,246,255);doc.rect(M,y,CW,8,'F');doc.setFillColor(37,99,235);doc.rect(M,y,4,8,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(37,99,235);doc.text('YOUR FAMILY NOTES & KNOWN RELATIVES',M+8,y+5.5);y+=10;
-doc.setFillColor(249,250,251);
-var relLines=doc.splitTextToSize(rel,CW-6);var relH=relLines.length*5+10;
-doc.rect(M,y,CW,relH,'F');doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);doc.text(relLines,M+4,y+7);y+=relH+5;
-y=chk(y,28);doc.setFillColor(255,247,237);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(217,119,6);doc.text('RECOMMENDED RESEARCH TOOLS FOR YOUR FAMILY HISTORY',M+3,y+5);y+=9;
-var tips=['FamilySearch.org (FREE) -- Access to 5+ billion genealogy records: births, marriages, deaths, immigration manifests from 100+ countries','Ancestry.com (Paid) -- Billions of digitized records, historical newspapers, US census data, and DNA relative matching tools','MyHeritage.com -- Strong European genealogy records with DNA testing and Smart Matching technology for relative discovery','Ellis Island Foundation -- Free searchable database of 65+ million immigrants arriving at Port of New York 1892-1957 (libertyellisfoundation.org)','NARA (archives.gov/genealogy) -- US naturalization records, census data, military service records, and immigration arrival manifests','FindMyPast.com -- Specializes in UK, Irish, Australian, and British Commonwealth genealogy records'];
-tips.forEach(function(t){y=chk(y,8);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);var ls=doc.splitTextToSize('• '+cl(t),CW-6);doc.text(ls,M+4,y+4);y+=ls.length*4.3+4;});
+  y=chk(y,50);
+  doc.setFillColor(239,246,255);doc.rect(M,y,CW,8,'F');doc.setFillColor(37,99,235);doc.rect(M,y,4,8,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(37,99,235);doc.text('YOUR FAMILY NOTES AND KNOWN RELATIVES',M+8,y+5.5);y+=10;
+  doc.setFillColor(249,250,251);
+  var relLines=doc.splitTextToSize(rel,CW-6);var relH=relLines.length*5+10;
+  doc.rect(M,y,CW,relH,'F');doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);doc.text(relLines,M+4,y+7);y+=relH+5;
+  // Research tools tip
+  y=chk(y,30);doc.setFillColor(255,247,237);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(217,119,6);doc.text('RECOMMENDED RESEARCH TOOLS',M+3,y+5);y+=9;
+  var tips=['FamilySearch.org (FREE) - Access to 5+ billion genealogy records from 100+ countries: births, marriages, deaths, immigration','Ancestry.com (Paid) - Billions of digitized records, historical newspapers, US census data, and DNA relative matching','Ellis Island Foundation (FREE) - Searchable database of 65+ million immigrants arriving at New York 1892-1957 (libertyellisfoundation.org)','NARA National Archives (archives.gov/genealogy) - US naturalization records, census data, military service records','FindMyPast.com - Specializes in UK, Irish, Australian, and British Commonwealth genealogy records'];
+  tips.forEach(function(t){y=chk(y,8);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);var ls=doc.splitTextToSize('- '+cl(t),CW-6);doc.text(ls,M+4,y+4);y+=ls.length*4.3+4;});
 }
 footer(pageNum);
-// AI RESEARCH RESULTS PAGE (if Claude did research)
-var rr = window.__relativeResearch;
-if(rr && rr.links && rr.links.length > 0){
+// AI RESEARCH RESULTS PAGE
+var rr=window.__relativeResearch;
+if(rr&&rr.links&&rr.links.length>0){
   doc.addPage();pageNum++;y=18;
-  y=sh('YOUR FAMILY HISTORY - AI RESEARCH RESULTS',y);
+  y=sh('SECTION 4: AI RESEARCH RESULTS - ONLINE SOURCES FOUND FOR YOUR FAMILY',y);
   doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(107,114,128);
-  doc.text('Claude searched online genealogy archives and government databases based on your family information. Results below.',M,y);y+=5;
-  if(rr.searchedAt){doc.setFontSize(7.5);doc.text('Research conducted: '+rr.searchedAt,M,y);y+=5;}
-  if(rr.summary){
-    y+=2;doc.setFillColor(243,232,255);doc.rect(M,y,CW,2,'F');y+=4;
-    doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);
-    var sls=doc.splitTextToSize(cl(rr.summary),CW);doc.text(sls,M,y);y+=sls.length*4.8+6;
-  }
-  // Group links by country/category
+  doc.text('Claude searched official genealogy archives and government databases based on your family notes. Results are specific to your ancestors.',M,y);y+=5;
+  if(rr.searchedAt){doc.setFontSize(7.5);doc.text('Research date: '+rr.searchedAt,M,y);y+=5;}
+  if(rr.summary){y+=2;doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);var sls=doc.splitTextToSize(cl(rr.summary),CW);doc.text(sls,M,y);y+=sls.length*4.8+6;}
   rr.links.forEach(function(link,li){
-    y=chk(y,22);
-    doc.setFillColor(li%2===0?249:245,li%2===0?246:243,li%2===0?255:255);
-    var lh=20;
+    y=chk(y,24);
+    doc.setFillColor(li%2===0?249:245,li%2===0?246:243,255);
     var descLines=doc.splitTextToSize(cl(link.description||''),CW-14);
-    lh=Math.max(20,descLines.length*4.3+14);
+    var lh=Math.max(22,descLines.length*4.3+14);
     doc.rect(M,y,CW,lh,'F');
-    doc.setFillColor(91,33,182);doc.rect(M,y,3,lh,'F');
-    // Country/category badge
+    // Country badge
     if(link.country){
-      doc.setFillColor(109,40,217);doc.rect(PW-M-40,y+2,40,7,'F');
+      var isCrit=link.country.toLowerCase().indexOf('critical')>-1;
+      doc.setFillColor(isCrit?217:109,isCrit?119:40,isCrit?6:217);
+      doc.rect(PW-M-42,y+2,42,7,'F');
       doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(255,255,255);
-      doc.text(cl(link.country).substring(0,22),PW-M-20,y+6.5,{align:'center'});
+      doc.text(cl(link.country).substring(0,24),PW-M-21,y+6.5,{align:'center'});
     }
-    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(31,41,55);
-    doc.text(cl(link.title||'').substring(0,55),M+6,y+7);
-    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(37,99,235);
-    doc.text(cl(link.url||'').substring(0,75),M+6,y+12);
-    if(descLines.length>0){
-      doc.setTextColor(75,85,99);doc.setFontSize(7.5);
-      doc.text(descLines,M+6,y+17);
-    }
+    // Left color strip
+    var isCritLink=link.country&&link.country.toLowerCase().indexOf('critical')>-1;
+    doc.setFillColor(isCritLink?217:91,isCritLink?119:33,isCritLink?6:182);doc.rect(M,y,3,lh,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(31,41,55);doc.text(cl(link.title||'').substring(0,55),M+6,y+7);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(37,99,235);doc.text(cl(link.url||'').substring(0,75),M+6,y+12);
+    if(descLines.length>0){doc.setTextColor(75,85,99);doc.setFontSize(7.5);doc.text(descLines,M+6,y+17);}
     y+=lh+2;
   });
-  // Research methodology note
+  // Methodology note
   y=chk(y,20);y+=4;
-  doc.setFillColor(255,247,237);doc.rect(M,y,CW,18,'F');doc.setFillColor(217,119,6);doc.rect(M,y,4,18,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(217,119,6);doc.text('RESEARCH METHODOLOGY',M+8,y+6);
+  doc.setFillColor(255,247,237);doc.rect(M,y,CW,16,'F');doc.setFillColor(217,119,6);doc.rect(M,y,4,16,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(217,119,6);doc.text('RESEARCH METHODOLOGY NOTE',M+8,y+6);
   doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(75,85,99);
-  doc.text('These results were researched by Claude AI based on the family information you provided. Links lead to official',M+8,y+11);
-  doc.text('government archives, genealogy databases, and academic resources. Always verify information directly with sources.',M+8,y+15.5);
+  doc.text('These results were found by Claude AI based on the family information you provided. Links lead to official government archives,',M+8,y+11);
+  doc.text('genealogy databases, and academic resources. Verify all information directly with the source before taking action.',M+8,y+15.5);
   footer(pageNum);
 }
-// DOCUMENT CHECKLIST PAGE
+// DOCUMENT CHECKLIST
 doc.addPage();pageNum++;y=18;
-y=sh('SECTION 4: UNIVERSAL DOCUMENT CHECKLIST (Print and Track)',y);
-doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);doc.text('Print this page. Check off each document as you obtain it. These apply to virtually every citizenship and residency program.',M,y);y+=8;
+y=sh('SECTION 5: UNIVERSAL DOCUMENT CHECKLIST (Print and Track)',y);
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(107,114,128);doc.text('Print this page. Check off each document as you obtain it. Required by virtually every citizenship and residency program.',M,y);y+=8;
 var chkSecs=[
-['YOUR PERSONAL DOCUMENTS',['Your US birth certificate (long-form certified copy)','Your current US passport (valid 6+ months from planned application date)','Your secondary government-issued photo ID (drivers license or state ID)','Your Social Security card or SSN documentation','Your marriage certificate if applicable (apostilled)','Your divorce decree if applicable (apostilled)','All previous US passports if applicable']],
-['PARENT DOCUMENTS',['Parent 1 birth certificate (long-form, certified)','Parent 2 birth certificate (long-form, certified)','Parents marriage certificate (certified and apostilled)','Parent naturalization certificate if applicable (CRITICAL for ancestry programs)','Parent death certificate if deceased']],
-['GRANDPARENT DOCUMENTS',['Grandparent 1 birth certificate from country of origin (certified)','Grandparent 2 birth certificate from country of origin (certified)','Grandparents marriage certificate (certified)','Any grandparent naturalization records (CRITICAL -- must prove they did NOT naturalize before your parents birth for ancestry programs)','Grandparent death certificates if deceased']],
-['BACKGROUND AND LEGAL',['FBI Identity History Summary Check (apostilled)','State police background check (apostilled)','Any court records if you have had legal matters','Military discharge papers (DD-214) if applicable']],
-['FINANCIAL DOCUMENTS (for residency and investment programs)',['3-6 months of bank statements','Proof of income: pension letters, investment income statements','Investment account statements if applicable','Property deed if investing in real estate programs']],
-['TRANSLATIONS AND CERTIFICATIONS',['Apostille stamp on ALL US-issued documents','Certified translations for all non-English documents','Notarized copies of original documents','Multiple certified copies of everything (order 3-5 of each)']],
+['YOUR PERSONAL DOCUMENTS',['Your US birth certificate (long-form certified copy)','Your current US passport (valid 6+ months from planned application date)','Government-issued photo ID (drivers license or state ID)','Marriage certificate if applicable (apostilled)','Divorce decree if applicable (apostilled)']],
+['PARENT DOCUMENTS',['Parent 1 birth certificate (long-form, certified)','Parent 2 birth certificate (long-form, certified)','Parents marriage certificate (certified and apostilled)','Parent naturalization certificate if applicable (CRITICAL for ancestry programs - date matters)','Parent death certificate if deceased']],
+['GRANDPARENT DOCUMENTS',['Grandparent birth certificate from country of origin (certified)','Marriage certificate (certified)','Any naturalization records (CRITICAL - must confirm date vs. child birth date for ancestry programs)','Death certificates if deceased']],
+['BACKGROUND AND LEGAL',['FBI Identity History Summary Check (apostilled)','State police background check (apostilled)','Any court records if applicable']],
+['FINANCIAL (for residency and investment programs)',['3-6 months of bank statements','Proof of income: pension letters, investment income statements','Investment account statements if applicable']],
+['TRANSLATIONS AND CERTIFICATIONS',['Apostille stamp on all US-issued documents','Certified translations for all non-English documents','Multiple certified copies of everything (order 3-5 of each)']],
 ];
 chkSecs.forEach(function(sec){
-y=chk(y,12+sec[1].length*8);
-doc.setFillColor(91,33,182);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text(sec[0],M+3,y+5);y+=8;
-sec[1].forEach(function(item){
-y=chk(y,8);doc.setDrawColor(156,163,175);doc.rect(M+1,y+0.5,5,5);
-doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
-var ls=doc.splitTextToSize(cl(item),CW-12);doc.text(ls,M+9,y+4.5);y+=Math.max(7,ls.length*4.5+2);
-});y+=4;
+  y=chk(y,12+sec[1].length*8);
+  doc.setFillColor(91,33,182);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text(sec[0],M+3,y+5);y+=8;
+  sec[1].forEach(function(item){
+    y=chk(y,8);doc.setDrawColor(156,163,175);doc.rect(M+1,y+0.5,5,5);
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
+    var ls=doc.splitTextToSize(cl(item),CW-12);doc.text(ls,M+9,y+4.5);y+=Math.max(7,ls.length*4.5+2);
+  });y+=4;
 });
 footer(pageNum);
-// RESOURCES + DISCLAIMER PAGE
+// RESOURCES + DISCLAIMER
 doc.addPage();pageNum++;y=18;
-y=sh('SECTION 5: KEY RESOURCES AND LEGAL DISCLAIMER',y);
+y=sh('SECTION 6: KEY RESOURCES AND LEGAL DISCLAIMER',y);
 doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(31,41,55);doc.text('ESSENTIAL ONLINE RESOURCES',M,y);y+=7;
 var res2=[
-{n:'US State Dept: Dual Nationality Guidance',u:'travel.state.gov/content/travel/en/legal/travel-legal-considerations',d:'Official US government guidance on dual nationality, impact on US citizenship, and overseas legal considerations.'},
-{n:'FamilySearch.org',u:'https://www.familysearch.org',d:'Free access to 5+ billion genealogy records worldwide. Start here for all ancestry research.'},
-{n:'Henley Passport Index',u:'https://www.henleyglobal.com/passport-index',d:'Live global passport strength ranking by visa-free access. Compare target citizenships before choosing.'},
-{n:'Ellis Island Foundation Records',u:'https://www.libertyellisfoundation.org',d:'Free database of 65+ million immigrants arriving at New York 1892-1957. Search your ancestors arrival records.'},
-{n:'NARA National Archives Genealogy',u:'https://www.archives.gov/genealogy',d:'US census records, naturalization papers, military records, and immigration manifests. Essential for ancestry programs.'},
-{n:'American Immigration Lawyers Assoc.',u:'https://www.aila.org',d:'Directory of qualified immigration attorneys. Find specialists for specific country citizenship programs.'}
+{n:'FamilySearch.org',u:'https://www.familysearch.org',d:'FREE access to 5+ billion genealogy records worldwide. Start all ancestry research here.'},
+{n:'Henley Passport Index',u:'https://www.henleyglobal.com/passport-index',d:'Live global passport strength ranking by visa-free access. Compare target citizenships.'},
+{n:'Ellis Island Foundation Records',u:'https://www.libertyellisfoundation.org',d:'FREE database of 65+ million immigrants arriving at New York 1892-1957. Search your ancestor arrival records.'},
+{n:'NARA National Archives Genealogy',u:'https://www.archives.gov/genealogy',d:'US census records, naturalization papers, military records, and immigration manifests.'},
+{n:'US Dept of State - Dual Nationality',u:'https://travel.state.gov',d:'Official US government guidance on dual nationality and impact on US citizenship.'},
+{n:'American Immigration Lawyers Assoc.',u:'https://www.aila.org',d:'Directory of qualified immigration attorneys. Find specialists for specific country programs.'}
 ];
 res2.forEach(function(r){
-y=chk(y,18);doc.setFillColor(249,250,251);doc.rect(M,y,CW,16,'F');doc.setFillColor(91,33,182);doc.rect(M,y,3,16,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(31,41,55);doc.text(r.n,M+6,y+5.5);
-doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(37,99,235);doc.text(cl(r.u).substring(0,80),M+6,y+10);
-doc.setTextColor(107,114,128);var dls=doc.splitTextToSize(r.d,CW-10);doc.text(dls,M+6,y+14);y+=18;
+  y=chk(y,18);doc.setFillColor(249,250,251);doc.rect(M,y,CW,16,'F');doc.setFillColor(91,33,182);doc.rect(M,y,3,16,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(31,41,55);doc.text(r.n,M+6,y+5.5);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(37,99,235);doc.text(cl(r.u).substring(0,80),M+6,y+10);
+  doc.setTextColor(107,114,128);var dls=doc.splitTextToSize(r.d,CW-10);doc.text(dls,M+6,y+14);y+=18;
 });
 y=chk(y,50);y+=3;
 doc.setFillColor(254,242,242);doc.rect(M,y,CW,55,'F');doc.setFillColor(220,38,38);doc.rect(M,y,4,55,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(220,38,38);doc.text('LEGAL DISCLAIMER',M+8,y+8);
 doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(75,85,99);
-var disc='This Dual Citizenship Action Plan is provided for informational and educational purposes only and does not constitute legal advice. Citizenship and immigration laws are highly complex, change frequently, and vary significantly by country. Requirements, fees, processing times, and eligibility rules in this report may not reflect the most current government requirements as of your reading date.\n\nYou should consult a qualified immigration attorney or citizenship specialist licensed in the relevant jurisdiction before making any decisions or investments related to pursuing dual citizenship or second passport programs. No guarantee is made that you will qualify for any citizenship program based on this analysis. This plan is based on the information you provided during your quiz session and does not constitute a legal eligibility assessment.\n\nInvestment program minimum amounts are frequently updated by government authorities without notice. Always verify current requirements directly with official government sources before committing funds. Past availability of citizenship programs does not guarantee their future existence.';
-var discLines=doc.splitTextToSize(disc,CW-14);doc.text(discLines,M+8,y+15);
+var disc='This Dual Citizenship Action Plan is provided for informational and educational purposes only and does not constitute legal advice. Citizenship and immigration laws are highly complex, change frequently, and vary significantly by country. Requirements, fees, processing times, and eligibility rules may not reflect the most current government requirements.\n\nYou should consult a qualified immigration attorney or citizenship specialist before making any decisions related to pursuing dual citizenship or second passport programs. No guarantee is made that you will qualify for any citizenship program based on this analysis. Investment program minimum amounts are frequently updated by government authorities without notice. Always verify current requirements directly with official government sources before committing funds.';
+var discLines=doc.splitTextToSize(disc,CW-14);doc.text(discLines,M+8,y+16);
 footer(pageNum);
 var filename='Citizenship-Action-Plan-'+(nm.replace(/[^a-zA-Z0-9]/g,'_')||'Client')+'.pdf';
 doc.save(filename);
