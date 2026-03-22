@@ -547,10 +547,9 @@ var pageNum=1;
 function cl(s){
   if(!s)return '';
   return String(s)
-    .replace(/–/g,'-').replace(/—/g,'-').replace(/‒/g,'-')
-    .replace(/[^	
- -~ -ÿ]/g,'')
-    .replace(/s+/g,' ').trim();
+    .replace(/\u2013/g,'-').replace(/\u2014/g,'-').replace(/\u2012/g,'-')
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g,'')
+    .replace(/\s+/g,' ').trim();
 }
 function footer(n){doc.setFillColor(91,33,182);doc.rect(0,PH-10,PW,10,'F');doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(196,181,253);doc.text('Dual Citizenship Action Plan | Informational Only | Consult a Qualified Immigration Attorney',M,PH-4);doc.setTextColor(255,255,255);doc.text('Page '+n,PW-M,PH-4,{align:'right'});doc.setTextColor(31,41,55);}
 function wt(txt,x,y,mw,lh){var ls=doc.splitTextToSize(cl(txt),mw||CW);doc.text(ls,x,y);return y+ls.length*(lh||4.8);}
