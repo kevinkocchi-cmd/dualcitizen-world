@@ -690,7 +690,7 @@ results.forEach(function(r,i){
   var costStr=cl(r.path.cost||'N/A');
   var rv=[''+(i+1),cl(r.path.name).substring(0,35),(r.path.category||'').charAt(0).toUpperCase()+(r.path.category||'').slice(1),pct+'%',(r.path.ease||'?')+'/10',timeStr.substring(0,22),costStr.substring(0,18)];
   cols.forEach(function(c,ci){
-    if(ci===3){var g=r.researchConfirmed?[5,150,105]:pct>=75?[5,150,105]:pct>=50?[217,119,6]:[107,114,128];(function(_cc){doc.setTextColor(_cc[0],_cc[1],_cc[2]);})(g[0],g[1],g[2]);}
+    if(ci===3){var g=r.researchConfirmed?[5,150,105]:pct>=75?[5,150,105]:pct>=50?[217,119,6]:[107,114,128];doc.setTextColor(g[0],g[1],g[2]);}
     else{doc.setTextColor(31,41,55);}
     doc.text(rv[ci],cx+2,y+5);cx+=c.w;
   });
@@ -707,7 +707,7 @@ topR.forEach(function(r,ri){
 doc.addPage();pageNum++;var p=r.path;var pn=cl(p.name);
 // Header - green if confirmed ancestry
 var hdrColor=r.researchConfirmed?[5,120,87]:[91,33,182];
-(function(_cc){doc.setFillColor(_cc[0],_cc[1],_cc[2]);})(hdrColor[0],hdrColor[1],hdrColor[2]);doc.rect(0,0,PW,20,'F');
+doc.setFillColor(hdrColor[0],hdrColor[1],hdrColor[2]);doc.rect(0,0,PW,20,'F');
 doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(196,181,253);
 var planLabel='DETAILED ACTION PLAN '+(ri+1)+' OF '+topR.length+' | '+(p.category||'').toUpperCase()+' PROGRAM';
 if(r.researchConfirmed) planLabel+=' | CONFIRMED ANCESTRY';
@@ -726,7 +726,7 @@ var qs=[{k:'COMPATIBILITY',v:r.pct+'%'+(r.researchConfirmed?' +CONFIRMED':'')},{
 var qw=(CW-6)/4;
 qs.forEach(function(q,qi){
   var qx=M+qi*(qw+2);
-  (function(_cc){doc.setFillColor(_cc[0],_cc[1],_cc[2]);})(qi===0&&r.researchConfirmed?[236,253,245]:[243,232,255]);
+  doc.setFillColor.apply(doc,[].concat(qi===0&&r.researchConfirmed?[236,253,245]:[243,232,255]));
   if(qi===0&&r.researchConfirmed)doc.setFillColor(236,253,245); else doc.setFillColor(243,232,255);
   doc.rect(qx,y,qw,15,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(qi===0&&r.researchConfirmed?5:109,qi===0&&r.researchConfirmed?120:40,qi===0&&r.researchConfirmed?87:217);
