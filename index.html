@@ -817,7 +817,7 @@ function sh(title,y,r,g,b){r=r||91;g=g||33;b=b||182;doc.setFillColor(r,g,b);doc.
 function chk(y,need){if(y+(need||20)>PH-16){footer(pageNum);doc.addPage();pageNum++;return 18;}return y;}
 var nm=cl((document.getElementById('p-name')||{}).value||'Client');
 var em=cl((document.getElementById('p-email')||{}).value||'');
-var rel=(window.__state&&window.__state.ancestors&&window.__state.ancestors.length)?"has-data":"";
+var rel="";
 var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 var rawResults=__state.results||[];
 // Apply research-based re-ranking if research is available
@@ -1124,7 +1124,8 @@ if(ancVals.length>0&&ancVals[0]!=='no_ancestry'){
     var tls=doc.splitTextToSize(info.tip,CW-14);doc.text(tls,M+8,y+22);y+=34;
   });
 } else {
-  doc.text('No specific ancestry selected. If you discover connections, visit FamilySearch.org or contact the national archives of the relevant country.',M,y);y+=12;
+  var _hasAncs=window.__state&&window.__state.ancestors&&window.__state.ancestors.length>0;
+  doc.text(_hasAncs?'Personalized ancestor research for your submitted ancestors is included in the pages above.':'No specific ancestry selected. If you discover connections, visit FamilySearch.org or contact the national archives of the relevant country.',M,y);y+=12;
 }
 // Family notes
 if(rel&&rel.length>5){
