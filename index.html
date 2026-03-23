@@ -709,7 +709,7 @@ function getAncestorProfileText(path,ancestors,rr,result){
   var matched=ancestors.filter(function(a){
     var c=(a.country||"").toLowerCase();
     if(!c)return false;
-    if((pid.indexOf("ital")>-1||pn.indexOf("ital")>-1)&&c==="italian")return true;
+    if((pid.indexOf("ital")>-1||pn.toLowerCase().indexOf("italian")>-1||pn.toLowerCase().indexOf("italy")>-1)&&c==="italian")return true;
     if((pid.indexOf("irish")>-1||pn.indexOf("irish")>-1||pid.indexOf("ireland")>-1)&&(c==="irish"||c==="ireland"))return true;
     if((pid.indexOf("german")>-1||pn.indexOf("german")>-1)&&c==="german")return true;
     if((pid.indexOf("polish")>-1||pn.indexOf("polish")>-1)&&c==="polish")return true;
