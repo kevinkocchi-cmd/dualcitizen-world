@@ -479,9 +479,11 @@ function getAncestors(){
   cards.forEach(function(card){
     var id=card.dataset.acid;
     function v(sfx){var el=document.getElementById("ac"+sfx+id);return el?el.value:"";}
+    var cou=v("-cou-");
     result.push({
       relationship:v("-rel-"),firstName:v("-fn-"),lastName:v("-ln-"),
-      country:v("-cou-"),town:v("-twn-"),birthYear:v("-by-"),
+      country:cou,countryCustom:cou==="other"?(v("-cust-")||""):"",
+      town:v("-twn-"),birthYear:v("-by-"),
       naturalization:v("-nat-"),
       docs:Array.from(document.querySelectorAll(".acd"+id+":checked")).map(function(c){return c.value;})
     });
@@ -495,30 +497,101 @@ function removeAncestorCard(id){
 }
 function addAncestorCard(){
   var id=++__ancestorIdCounter;
-  var co='<option value="">Country...</option>'+
-    '<option value="italian">Italy</option>'+
-    '<option value="irish">Ireland</option>'+
-    '<option value="german">Germany</option>'+
-    '<option value="polish">Poland</option>'+
-    '<option value="british">United Kingdom</option>'+
+  var co=
+    '<option value="">Country...</option>'+
+    '<optgroup label="Europe">'+
+    '<option value="albanian">Albania</option>'+
+    '<option value="austrian">Austria</option>'+
+    '<option value="belarusian">Belarus</option>'+
+    '<option value="belgian">Belgium</option>'+
+    '<option value="bosnian">Bosnia &amp; Herzegovina</option>'+
+    '<option value="bulgarian">Bulgaria</option>'+
+    '<option value="croatian">Croatia</option>'+
+    '<option value="cypriot">Cyprus</option>'+
+    '<option value="czech">Czech Republic</option>'+
+    '<option value="danish">Denmark</option>'+
+    '<option value="estonian">Estonia</option>'+
+    '<option value="finnish">Finland</option>'+
     '<option value="french">France</option>'+
-    '<option value="portuguese">Portugal</option>'+
-    '<option value="spanish">Spain</option>'+
+    '<option value="german">Germany</option>'+
     '<option value="greek">Greece</option>'+
     '<option value="hungarian">Hungary</option>'+
-    '<option value="lithuanian">Lithuania</option>'+
+    '<option value="icelandic">Iceland</option>'+
+    '<option value="irish">Ireland</option>'+
+    '<option value="italian">Italy</option>'+
+    '<option value="kosovan">Kosovo</option>'+
     '<option value="latvian">Latvia</option>'+
-    '<option value="estonian">Estonia</option>'+
-    '<option value="czech">Czech Republic</option>'+
+    '<option value="lithuanian">Lithuania</option>'+
+    '<option value="luxembourgish">Luxembourg</option>'+
+    '<option value="maltese">Malta</option>'+
+    '<option value="moldovan">Moldova</option>'+
+    '<option value="montenegrin">Montenegro</option>'+
+    '<option value="dutch">Netherlands</option>'+
+    '<option value="macedonian">North Macedonia</option>'+
+    '<option value="norwegian">Norway</option>'+
+    '<option value="polish">Poland</option>'+
+    '<option value="portuguese">Portugal</option>'+
+    '<option value="romanian">Romania</option>'+
+    '<option value="russian">Russia</option>'+
+    '<option value="serbian">Serbia</option>'+
     '<option value="slovak">Slovakia</option>'+
     '<option value="slovenian">Slovenia</option>'+
-    '<option value="croatian">Croatia</option>'+
-    '<option value="romanian">Romania</option>'+
-    '<option value="armenian">Armenia</option>'+
-    '<option value="israeli">Israel</option>'+
-    '<option value="mexican">Mexico</option>'+
+    '<option value="spanish">Spain</option>'+
+    '<option value="swedish">Sweden</option>'+
+    '<option value="swiss">Switzerland</option>'+
+    '<option value="ukrainian">Ukraine</option>'+
+    '<option value="british">United Kingdom</option>'+
+    '</optgroup>'+
+    '<optgroup label="Americas">'+
     '<option value="argentinian">Argentina</option>'+
-    '<option value="other">Other / Unsure</option>';
+    '<option value="bolivian">Bolivia</option>'+
+    '<option value="brazilian">Brazil</option>'+
+    '<option value="canadian">Canada</option>'+
+    '<option value="chilean">Chile</option>'+
+    '<option value="colombian">Colombia</option>'+
+    '<option value="cuban">Cuba</option>'+
+    '<option value="dominican">Dominican Republic</option>'+
+    '<option value="ecuadorian">Ecuador</option>'+
+    '<option value="salvadoran">El Salvador</option>'+
+    '<option value="guatemalan">Guatemala</option>'+
+    '<option value="honduran">Honduras</option>'+
+    '<option value="mexican">Mexico</option>'+
+    '<option value="nicaraguan">Nicaragua</option>'+
+    '<option value="panamanian">Panama</option>'+
+    '<option value="paraguayan">Paraguay</option>'+
+    '<option value="peruvian">Peru</option>'+
+    '<option value="uruguayan">Uruguay</option>'+
+    '<option value="venezuelan">Venezuela</option>'+
+    '</optgroup>'+
+    '<optgroup label="Middle East &amp; Africa">'+
+    '<option value="armenian">Armenia</option>'+
+    '<option value="capeverdean">Cape Verde</option>'+
+    '<option value="egyptian">Egypt</option>'+
+    '<option value="ethiopian">Ethiopia</option>'+
+    '<option value="georgian">Georgia</option>'+
+    '<option value="ghanaian">Ghana</option>'+
+    '<option value="iranian">Iran</option>'+
+    '<option value="iraqi">Iraq</option>'+
+    '<option value="israeli">Israel</option>'+
+    '<option value="lebanese">Lebanon</option>'+
+    '<option value="moroccan">Morocco</option>'+
+    '<option value="nigerian">Nigeria</option>'+
+    '<option value="senegalese">Senegal</option>'+
+    '<option value="southafrican">South Africa</option>'+
+    '<option value="syrian">Syria</option>'+
+    '<option value="turkish">Turkey</option>'+
+    '</optgroup>'+
+    '<optgroup label="Asia &amp; Pacific">'+
+    '<option value="australian">Australia</option>'+
+    '<option value="chinese">China</option>'+
+    '<option value="filipino">Philippines</option>'+
+    '<option value="indian">India</option>'+
+    '<option value="japanese">Japan</option>'+
+    '<option value="newzealander">New Zealand</option>'+
+    '<option value="southkorean">South Korea</option>'+
+    '<option value="vietnamese">Vietnam</option>'+
+    '</optgroup>'+
+    '<option value="other">Other (specify below)</option>';
   var inp='<input type="text" ';
   var sel='<select ';
   var cs=' class="form-input text-sm w-full"';
@@ -534,7 +607,10 @@ function addAncestorCard(){
         '<option value="great-grandparent">Great-Grandparent</option>'+
         '<option value="ggrandparent">Great-Great-Grandparent</option>'+
       '</select></div>'+
-      '<div>'+lb+'Country of Origin</label>'+sel+'id="ac-cou-'+id+'"'+cs+'>'+co+'</select></div>'+
+      '<div>'+lb+'Country of Origin</label>'+
+        sel+'id="ac-cou-'+id+'" onchange="document.getElementById(\'ac-cust-'+id+'\').style.display=this.value===\'other\'?\'block\':\'none\'"'+cs+'>'+co+'</select>'+
+        inp+'id="ac-cust-'+id+'" class="form-input text-sm w-full mt-1" style="display:none" placeholder="Specify country name...">'+
+      '</div>'+
     '</div>'+
     '<div class="grid grid-cols-2 gap-3 mb-3">'+
       '<div>'+lb+'First Name <span class="font-normal text-gray-400">(optional)</span></label>'+inp+'id="ac-fn-'+id+'"'+cs+' placeholder="First name"></div>'+
