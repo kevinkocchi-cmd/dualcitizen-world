@@ -1038,6 +1038,59 @@ bens.forEach(function(b){y=chk(y,8);doc.setFillColor(255,247,237);doc.rect(M,y,3
 if(p.govUrl){y=chk(y,18);y+=3;doc.setFillColor(239,246,255);doc.rect(M,y,CW,16,'F');doc.setFillColor(37,99,235);doc.rect(M,y,4,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(37,99,235);doc.text('OFFICIAL GOVERNMENT RESOURCE',M+8,y+6);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);if(p.govName)doc.text(cl(p.govName),M+8,y+11);doc.setTextColor(37,99,235);doc.text(cl(p.govUrl).substring(0,75),M+8,y+15.5);}
 footer(pageNum);
 });
+// PERSONALIZED ANCESTOR RESEARCH — runs for ALL matched paths, not just top 5
+var _pAncs=(window.__state&&window.__state.ancestors)||[];
+if(_pAncs.length>0){
+  var _pDone={};
+  results.forEach(function(r){
+    var _ap=getAncestorProfileText(r.path,_pAncs,null,null);
+    if(_ap&&!_pDone[r.path.id]){
+      _pDone[r.path.id]=true;
+      var _inTop=topR.some(function(tr){return tr.path.id===r.path.id;});
+      if(!_inTop){
+        doc.addPage();pageNum++;y=18;
+        y=sh('ANCESTOR RESEARCH: '+((r.path.country||r.path.name)||''). toUpperCase(),y);y+=4;
+        doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(31,41,55);
+        var _al=_ap.ancestor||'';
+        if(_al){doc.text(_al,M,y);y+=8;}
+        doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(55,65,81);
+        (_ap.lines||[]).forEach(function(_ln){
+          if(y>265){doc.addPage();pageNum++;y=18;}
+          y=wt('• '+_ln,M,y,CW,9.5);y+=2;
+        });
+        if(_ap.note){
+          y+=4;
+          doc.setFillColor(254,242,242);doc.setDrawColor(239,68,68);
+          doc.roundedRect(M-2,y-2,CW+4,18,2,2,'FD');
+          doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(185,28,28);
+          doc.text(_ap.note,M+4,y+5,{maxWidth:CW-6});y+=16;
+        }
+        footer(pageNum);
+      }
+    }
+  });
+  // Canadian ancestry: no citizenship path exists, show genealogy resources
+  var _caAncs=_pAncs.filter(function(a){return (a.country||''). toLowerCase()==='canadian';});
+  if(_caAncs.length>0){
+    doc.addPage();pageNum++;y=18;
+    y=sh('ANCESTOR RESEARCH: CANADA',y);y+=4;
+    _caAncs.forEach(function(_ca){
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(31,41,55);
+      var _caNm=((_ca.firstName||'')+' '+(_ca.lastName||'')).trim();
+      var _caRl=_ca.relationship?_ca.relationship.charAt(0).toUpperCase()+_ca.relationship.slice(1):'';
+      var _caInfo=(_caRl?_caRl+' ':'')+(_caNm||'')+(_ca.town?', '+_ca.town:'')+(_ca.birthYear?', b.'+_ca.birthYear:'');
+      if(_caInfo){doc.text(_caInfo,M,y);y+=8;}
+    });
+    doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(107,114,128);
+    y=wt('Note: Canada does not have a citizenship-by-descent path for Americans. Your Canadian ancestor may trace back to UK, Irish, or French lineage — check records below to uncover further eligible ancestry.',M,y,CW,9);y+=6;
+    doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(55,65,81);
+    ['Library and Archives Canada (bac-lac.gc.ca) — census 1851–1921, immigration, naturalization records','Provincial vital statistics offices — birth, marriage and death certificates by province','Ancestry.ca — passenger lists, naturalization records, historical census','FamilySearch.org — free access to all major Canadian genealogy collections','Find My Past (findmypast.com) — UK/Irish immigrants to Canada, ship manifests'].forEach(function(_ln){
+      if(y>265){doc.addPage();pageNum++;y=18;}
+      y=wt('• '+_ln,M,y,CW,9.5);y+=2;
+    });
+    footer(pageNum);
+  }
+}
 // ANCESTRY RECORDS GUIDE
 doc.addPage();pageNum++;y=18;
 y=sh('SECTION 3: ANCESTRY RECORDS RESEARCH GUIDE',y);
