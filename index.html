@@ -703,101 +703,285 @@ function applyResearchRanking(results){
 }
 
 function getAncestorProfileText(path,ancestors,rr,result){
-  var pn=(path.name||"").toLowerCase();
-  var pid=(path.id||"").toLowerCase();
-  if(!Array.isArray(ancestors)||!ancestors.length)return null;
-  var matched=ancestors.filter(function(a){
-    var c=(a.country||"").toLowerCase();
-    if(!c)return false;
-    if((pid.indexOf("ital")>-1||pn.toLowerCase().indexOf("italian")>-1||pn.toLowerCase().indexOf("italy")>-1)&&c==="italian")return true;
-    if((pid.indexOf("irish")>-1||pn.indexOf("irish")>-1||pid.indexOf("ireland")>-1)&&(c==="irish"||c==="ireland"))return true;
-    if((pid.indexOf("german")>-1||pn.indexOf("german")>-1)&&c==="german")return true;
-    if((pid.indexOf("polish")>-1||pn.indexOf("polish")>-1)&&c==="polish")return true;
-    if((pid.indexOf("british")>-1||pn.indexOf("british")>-1||pid.indexOf("uk")>-1)&&(c==="british"||c==="uk"))return true;
-    if((pid.indexOf("french")>-1||pn.indexOf("french")>-1)&&c==="french")return true;
-    if((pid.indexOf("portug")>-1||pn.indexOf("portug")>-1)&&c==="portuguese")return true;
-    if((pid.indexOf("spanish")>-1||pn.indexOf("spanish")>-1||pid.indexOf("spain")>-1)&&c==="spanish")return true;
-    if((pid.indexOf("greek")>-1||pn.indexOf("greek")>-1)&&c==="greek")return true;
-    if((pid.indexOf("hungar")>-1||pn.indexOf("hungar")>-1)&&c==="hungarian")return true;
-    if((pid.indexOf("lithu")>-1||pn.indexOf("lithu")>-1)&&c==="lithuanian")return true;
-    if((pid.indexOf("latvi")>-1||pn.indexOf("latvi")>-1)&&c==="latvian")return true;
-    if((pid.indexOf("estoni")>-1||pn.indexOf("estoni")>-1)&&c==="estonian")return true;
-    if((pid.indexOf("czech")>-1||pn.indexOf("czech")>-1)&&c==="czech")return true;
-    if((pid.indexOf("slovak")>-1||pn.indexOf("slovak")>-1)&&(c==="slovak"||c==="slovakia"))return true;
-    if((pid.indexOf("sloven")>-1||pn.indexOf("sloven")>-1)&&c==="slovenian")return true;
-    if((pid.indexOf("croat")>-1||pn.indexOf("croat")>-1)&&c==="croatian")return true;
-    if((pid.indexOf("romani")>-1||pn.indexOf("romani")>-1)&&c==="romanian")return true;
-    if((pid.indexOf("armeni")>-1||pn.indexOf("armeni")>-1)&&c==="armenian")return true;
-    if((pid.indexOf("mexic")>-1||pn.indexOf("mexic")>-1)&&c==="mexican")return true;
-    if((pid.indexOf("argent")>-1||pn.indexOf("argent")>-1)&&c==="argentinian")return true;
-    return false;
-  });
-  if(!matched.length)return null;
-  var a=matched[0];
-  var fullName=((a.firstName||"")+" "+(a.lastName||"")).trim();
-  var rel=a.relationship||"";
-  var relLabel=rel?rel.charAt(0).toUpperCase()+rel.slice(1):"";
-  var nat=a.naturalization||"unknown";
-  var docs=a.docs||[];
-  var town=a.town||"";
-  var by=a.birthYear||"";
-  var ancLine="";
-  if(relLabel)ancLine+=relLabel;
-  if(fullName)ancLine+=(ancLine?" ":"")+fullName;
-  if(town)ancLine+=(ancLine?" - ":"")+town;
-  if(by)ancLine+=(ancLine?", b.":"b.")+by;
-  var c=(a.country||"").toLowerCase();
-  var lines=[];
-  var note="";
-  if(c==="italian"){
-    lines.push(town?"Vital records for "+town+": Antenati portal (antenati.cultura.gov.it) - 71M civil records":"Antenati portal (antenati.cultura.gov.it) - 71M+ Italian civil records 1820-1940");
-    lines.push("NARA naturalization: fold3.com and ancestry.com - petitions and declarations of intent");
-    lines.push("1920 US Census (ancestry.com) - lists year of immigration and naturalization status");
-    lines.push("Ship manifests 1895-1957: libertyellisfoundation.org and ancestry.com");
-    if(nat==="before-1948")note="CRITICAL: Ancestor naturalized before 1948 - Italian JUS path eligibility requires careful date verification.";
-    else if(nat==="never")lines.push("Never naturalized - strong indicator of Jure Sanguinis eligibility, pursue this path");
-    if(docs.indexOf("nat-papers")>-1)lines.push("Naturalization papers in hand - verify exact date against each descendant birth date");
-    if(docs.indexOf("ship-manifest")>-1)lines.push("Ship manifest in hand - confirms arrival date for timeline reconstruction");
-  }else if(c==="irish"){
-    lines.push(town?"Records for "+town+": IrishGenealogy.ie (free births/marriages/deaths 1864-1924)":"IrishGenealogy.ie - free civil registration records 1864-1924");
-    lines.push("Local archives: Cork, Galway, Dublin city and county archives for pre-1864 records");
-    lines.push("Foreign Birth Registration requires ancestor birth/death cert plus full descent chain");
-    lines.push("Griffith Valuation (1847-64): askaboutireland.ie for townland and property records");
-    if(docs.indexOf("birth-cert")>-1)lines.push("Birth certificate in hand - note townland to identify correct parish records");
-  }else if(c==="german"){
-    lines.push("Archion.de and Matricula-Online.eu for Lutheran and Catholic church records");
-    lines.push("Deutsche Auswanderer-Datenbank (DAB): auswanderer-bdb.de for emigration records");
-    lines.push("BVA (bva.bund.de) to apply for Article 116 citizenship restoration");
-    if(town)lines.push("Standesamt in "+town+" holds civil records from 1876 onward");
-    lines.push("FamilySearch.org has extensive German church record collections - free access");
-  }else if(c==="polish"){
-    lines.push("Geneteka.genealodzy.pl - indexed Polish vital records, free, enormous database");
-    lines.push("szukajwarchiwach.pl - Polish State Archives digital collections");
-    lines.push("Polish citizenship by descent requires documented unbroken line via voivodeship office");
-    if(town)lines.push("Records for "+town+": determine partition (Russian, Prussian, Austrian) for correct archive");
-  }else if(c==="british"||c==="uk"){
-    lines.push("GRO UK (gro.gov.uk): certified birth/marriage/death certificates from 1837 onward");
-    lines.push("FindMyPast.co.uk and Ancestry.co.uk: census, military, and parish records");
-    lines.push("British descent citizenship limited to one generation born abroad - check UKVisas rules");
-    if(town)lines.push("County record office for "+town+" holds pre-1837 parish records and wills");
-  }else if(c==="french"){
-    lines.push("Archives departementales (each dept has its own portal) for civil and parish records");
-    lines.push("French citizenship by descent available if unbroken documented line from French citizen");
-    lines.push("Service Central de la Nationalite at Paris Tribunal for declaration of nationality");
-  }else if(c==="portuguese"){
-    lines.push("Arquivo Nacional Torre do Tombo (antt.dglab.gov.pt) - national archive records");
-    lines.push("Portuguese consulate for citizenship by descent application and required document list");
-    lines.push("Sephardic Jewish heritage path: separate simplified process via Portuguese government");
-  }else{
-    if(rr&&rr.links&&rr.links.length){
-      lines.push("Research resources identified for this citizenship path:");
-      rr.links.slice(0,3).forEach(function(lk){lines.push((lk.title||lk.url||"").substring(0,80));});
-    }else{
-      lines.push("Gather vital records (birth, marriage, death) for each generation in the descent line");
-      lines.push("Contact the relevant consulate to confirm required documentation for this path");
-    }
-  }
-  return {title:"YOUR ANCESTOR RESEARCH",ancestor:ancLine,lines:lines,note:note};
+if(!path||!ancestors||!ancestors.length)return null;
+var pn=(path.name||"").toLowerCase();
+var pc=(path.country||path.name||"").toLowerCase();
+var anc=null;
+var isItalian=false,isGerman=false,isIrish=false,isBritish=false;
+var isPolish=false,isHungarian=false,isFrench=false,isPortuguese=false;
+var isGreek=false,isCanadian=false,isSpanish=false;
+var pathIsItalian=pc.indexOf("ital")>-1&&pc.indexOf("digital")<0;
+var pathIsGerman=pc.indexOf("german")>-1||pc.indexOf("germany")>-1;
+var pathIsIrish=pc.indexOf("irish")>-1||pc.indexOf("ireland")>-1;
+var pathIsBritish=pc.indexOf("brit")>-1||pc.indexOf("uk")>-1||pc.indexOf("england")>-1||pc.indexOf("united kingdom")>-1;
+var pathIsPolish=pc.indexOf("polish")>-1||pc.indexOf("poland")>-1;
+var pathIsHungarian=pc.indexOf("hungar")>-1;
+var pathIsFrench=pc.indexOf("french")>-1||pc.indexOf("france")>-1;
+var pathIsPortuguese=pc.indexOf("portug")>-1;
+var pathIsGreek=pc.indexOf("greek")>-1||pc.indexOf("greece")>-1;
+var pathIsCanadian=pc.indexOf("canad")>-1;
+var pathIsSpanish=pc.indexOf("spain")>-1||pc.indexOf("spanish")>-1;
+for(var i=0;i<ancestors.length;i++){
+  var ac=(ancestors[i].country||"").toLowerCase().trim();
+  if(pathIsItalian&&(ac==="italian"||ac==="italy")){anc=ancestors[i];isItalian=true;break;}
+  if(pathIsGerman&&(ac==="german"||ac==="germany")){anc=ancestors[i];isGerman=true;break;}
+  if(pathIsIrish&&(ac==="irish"||ac==="ireland")){anc=ancestors[i];isIrish=true;break;}
+  if(pathIsBritish&&(ac==="british"||ac==="england"||ac==="uk"||ac==="wales"||ac==="scotland")){anc=ancestors[i];isBritish=true;break;}
+  if(pathIsPolish&&(ac==="polish"||ac==="poland")){anc=ancestors[i];isPolish=true;break;}
+  if(pathIsHungarian&&(ac==="hungarian"||ac==="hungary")){anc=ancestors[i];isHungarian=true;break;}
+  if(pathIsFrench&&(ac==="french"||ac==="france")){anc=ancestors[i];isFrench=true;break;}
+  if(pathIsPortuguese&&(ac==="portuguese"||ac==="portugal")){anc=ancestors[i];isPortuguese=true;break;}
+  if(pathIsGreek&&(ac==="greek"||ac==="greece")){anc=ancestors[i];isGreek=true;break;}
+  if(pathIsCanadian&&(ac==="canadian"||ac==="canada")){anc=ancestors[i];isCanadian=true;break;}
+  if(pathIsSpanish&&(ac==="spanish"||ac==="spain")){anc=ancestors[i];isSpanish=true;break;}
+}
+if(!anc)return null;
+var name=anc.name||"";
+var town=anc.town||anc.birthplace||"";
+var rel=anc.relationship||anc.relation||anc.rel||"";
+var yr=anc.year||anc.birthYear||"";
+var ancLine=name?(name+(rel?" ("+rel+")")+(town?", born in "+town:"")+(yr?", c."+yr:"")):"(unknown name)";
+var title,subtitle,description,steps,docs,benefits,resources,note;
+if(isItalian){
+  title="ANCESTOR RESEARCH: ITALY";
+  subtitle=name?"Your Italian Ancestor: "+ancLine:"Italian Ancestry Research Guide";
+  description="Italy has maintained civil vital records since 1866 and detailed parish records dating back to the 1500s. Most comuni (municipalities) preserve original birth, marriage, and death records. Citizenship by descent (Jure Sanguinis) has no generational limit provided no ancestor naturalized as a citizen of another country before their child was born.";
+  steps=[
+    "SEARCH FREE ITALIAN RECORDS ONLINE: Visit Antenati.san.beniculturali.it — the official Italian State Archives portal with millions of digitized civil and parish records, free of charge.",
+    town?"TARGET THE COMMUNE OF "+town.toUpperCase()+": Each comune maintained its own civil registry. Contact the Ufficio di Stato Civile directly by email or post to request the ancestor's birth record. Use Google Translate for Italian email templates.":"IDENTIFY YOUR ANCESTOR'S COMMUNE: Search FamilySearch.org Italy records, Ellis Island manifests (libertyellisfoundation.org), or NARA naturalization files (archives.gov) — these often list the exact town of origin.",
+    "REQUEST CERTIFIED BIRTH CERTIFICATE (ESTRATTO): Write to the Comune's Ufficio di Stato Civile requesting an 'estratto dell'atto di nascita con apostille'. Typical cost: EUR 10-50. Allow 4-10 weeks. For pre-1866 records, contact the Archivio di Stato in that province.",
+    "BUILD THE DOCUMENT CHAIN: Collect certified birth, marriage, and death certificates for every generation from your Italian ancestor down to yourself. Each generation must be linked to the next with no gaps.",
+    "GET US DOCUMENTS WITH APOSTILLE: Order certified copies of all US birth and marriage certificates from VitalChek.com. Then apply an Apostille stamp at your Secretary of State office (apostille.sos.ca.gov for California, etc.).",
+    "GET CERTIFIED TRANSLATIONS: All non-Italian documents must be translated into Italian by a certified translator. Many Italian consulates maintain approved translator lists.",
+    "FILE AT YOUR ITALIAN CONSULATE: Submit the complete package to your regional Italian consulate for Cittadinanza Italiana Jure Sanguinis. Bring all originals with Apostille and translations. Processing time: 1-5 years depending on the consulate."
+  ];
+  docs=["Ancestor's Italian birth certificate (estratto atto di nascita) with Apostille","Ancestor's marriage and death certificate","All connecting birth and marriage certificates (one per generation)","Your US birth certificate with Apostille","Your valid US passport","Certified Italian translations of all non-Italian documents","USCIS or NARA proof that no ancestor naturalized before their child was born"];
+  benefits=["No generational limit — any paternal or maternal Italian lineage may qualify","No residency requirement — apply from the US via your regional consulate","Full EU citizenship — live, work, and study across all 27 EU countries","Your children and grandchildren inherit the citizenship automatically"];
+  resources=[
+    {name:"Antenati — Italian State Archives (free digitized records)",url:"https://antenati.san.beniculturali.it"},
+    {name:"FamilySearch Italy Genealogy Wiki",url:"https://www.familysearch.org/wiki/en/Italy_Genealogy"},
+    {name:"Ellis Island Records (find ancestor town)",url:"https://www.libertyellisfoundation.org"},
+    {name:"Find your Italian Consulate",url:"https://www.esteri.it/en/servizi-consolari-e-visti/italiani-all-estero/"}
+  ];
+  if(!town)note="ACTION NEEDED: You must identify the exact comune (birth town) before requesting records. Check Ellis Island manifests, NARA naturalization files (archives.gov), or old family documents for the town name.";
+}
+else if(isGerman){
+  title="ANCESTOR RESEARCH: GERMANY";
+  subtitle=name?"Your German Ancestor: "+ancLine:"German Ancestry Research Guide";
+  description="Germany maintained church records (Kirchenbucher) from the 1500s and civil registration (Standesamt) from 1876 onward. Many original records are now digitized and searchable online. German citizenship by descent (Abstammungsprinzip) is available if your ancestor was a German citizen and did not lose citizenship through naturalization.";
+  steps=[
+    town?"SEARCH RECORDS FOR "+town.toUpperCase()+": The Hamburg emigration database lists German emigrants from 1850-1934. Search Matricula-online.eu for church books from your ancestor's region. Archion.de has comprehensive coverage for most German states.":"FIND YOUR ANCESTOR'S TOWN: Search the Hamburg emigration database (emigrant-database.de), NARA naturalization records (archives.gov), or Ellis Island manifests (libertyellisfoundation.org) to pinpoint the exact German town.",
+    "SEARCH DIGITIZED CHURCH BOOKS: Visit Matricula-online.eu (free) for Catholic parish books across Germany, Austria, and Poland. Archion.de (subscription) covers Lutheran and Reformed churches. Search for your ancestor's birth, baptism, marriage, and death records.",
+    "ACCESS STANDESAMT RECORDS (POST-1876): Contact the Standesamt (civil registry) of your ancestor's municipality for civil records after 1876. Records older than 110 years (birth) or 80 years (marriage/death) are accessible. Many have been transferred to Landesarchive (state archives).",
+    "CONTACT THE STATE ARCHIVE (LANDESARCHIV): Each German state maintains a Landesarchiv with older records. For example: Landesarchiv Baden-Wurttemberg for SW Germany, Bayerisches Hauptstaatsarchiv for Bavaria. Submit written requests with full ancestor details.",
+    "CHECK US NATURALIZATION RECORDS AT NARA: If your ancestor emigrated to the USA, their naturalization file at NARA (archives.gov) will confirm whether and when they naturalized — critical for establishing citizenship eligibility.",
+    "FILE WITH BUNDESVERWALTUNGSAMT (BVA): The Federal Administration Office in Cologne handles German citizenship claims for descendants. Submit Form V100 with supporting documents. Contact: bva.bund.de. Processing takes 1-3 years."
+  ];
+  docs=["Ancestor's German birth or baptism certificate","Ancestor's marriage certificate (Heiratsurkunde)","Emigration record or ship manifest","NARA naturalization record (or proof of non-naturalization)","All connecting birth and marriage certificates per generation","Your US birth certificate with Apostille","Certified German translations of all non-German documents"];
+  benefits=["German citizenship grants full EU rights — live and work in 27 EU countries","One of the world's most powerful passports — visa-free to 190+ countries","German citizenship passes automatically to your children","No residency requirement to claim by descent"];
+  resources=[
+    {name:"Matricula Online — free German church books",url:"https://www.matricula-online.eu"},
+    {name:"Archion.de — Lutheran church records (subscription)",url:"https://www.archion.de"},
+    {name:"Hamburg Emigration Database 1850-1934",url:"https://www.emigrant-database.de"},
+    {name:"Bundesverwaltungsamt — German citizenship claims (Form V100)",url:"https://www.bva.bund.de/DE/Services/Buerger/Ausweis-Dokumente-Recht/Staatsangehoerigkeit/Staatsangehoerigkeit_node.html"}
+  ];
+  if(!town)note="ACTION NEEDED: Identify your ancestor's exact German town before searching records. Check NARA naturalization files, Ellis Island records, or old family letters for the Geburtsort (place of birth).";
+}
+else if(isIrish){
+  title="ANCESTOR RESEARCH: IRELAND";
+  subtitle=name?"Your Irish Ancestor: "+ancLine:"Irish Ancestry Research Guide";
+  description="Ireland has maintained civil registration records since 1864 and Catholic parish records dating back to the 1700s. Many records are freely searchable online. Irish citizenship by descent (Foreign Birth Registration) requires proof of one Irish-born grandparent or parent, with no limit on how long ago they were born.";
+  steps=[
+    "SEARCH IRISH CIVIL RECORDS FREE: Visit IrishGenealogy.ie — the official Irish government portal. Search birth records from 1864, marriage records from 1845, and death records from 1864. These are fully digitized and free to search and view.",
+    "SEARCH GRONI FOR NORTHERN IRELAND RECORDS: If your ancestor was from Northern Ireland (counties Antrim, Armagh, Down, Fermanagh, Londonderry, Tyrone), search the General Register Office Northern Ireland at groni.gov.uk.",
+    "SEARCH HISTORIC CENSUS AND LAND RECORDS: The 1901 and 1911 Irish Census are fully searchable at census.nationalarchives.ie. Griffith's Valuation (1847-1864) at askaboutireland.ie lists households by county and townland.",
+    town?"SEARCH RECORDS FOR "+town.toUpperCase()+": Search specifically for your ancestor's county using IrishGenealogy.ie. Catholic parish registers for most counties are available on Findmypast.com or through the National Library of Ireland (registers.nli.ie).":"IDENTIFY YOUR ANCESTOR'S COUNTY: Use Ellis Island ship manifests (libertyellisfoundation.org) or old family documents to identify the Irish county. This narrows down which archives and parish records to search.",
+    "REQUEST CERTIFIED COPY OF IRISH BIRTH CERTIFICATE: Once found, order a certified copy directly from the General Register Office Ireland (gro.ie). Cost is EUR 20 per certificate. US requests can be submitted by post or via a genealogy research service.",
+    "FILE FOREIGN BIRTH REGISTRATION (FBR): Once you have your Irish ancestor's birth certificate and the connecting chain of documents, apply for Foreign Birth Registration at your nearest Irish consulate or embassy. Fee: approx. EUR 278. Processing time: 6-18 months."
+  ];
+  docs=["Irish ancestor's birth certificate (certified copy from GRO Ireland)","Ancestor's marriage certificate (Irish or US)","Your parent's birth certificate if claiming through parent","Your own US birth certificate with Apostille","Your valid US passport","Connecting marriage certificates for each generation"];
+  benefits=["Full Irish and EU citizenship — right to live and work in 27 EU countries","Irish passport — visa-free to 187 countries","No residency required — apply through any Irish consulate worldwide","Passes to your children through continued Foreign Birth Registration"];
+  resources=[
+    {name:"IrishGenealogy.ie — free official civil records (1864+)",url:"https://www.irishgenealogy.ie"},
+    {name:"National Library of Ireland — Catholic parish registers",url:"https://registers.nli.ie"},
+    {name:"GRO Ireland — order certified birth certificates",url:"https://www.gro.ie"},
+    {name:"Irish Foreign Births Register — application info",url:"https://www.ireland.ie/en/dfa/citizenship/"}
+  ];
+}
+else if(isBritish){
+  title="ANCESTOR RESEARCH: UNITED KINGDOM";
+  subtitle=name?"Your British Ancestor: "+ancLine:"UK Ancestry Research Guide";
+  description="England, Scotland, Wales, and Northern Ireland all maintained civil registration from 1837 (England/Wales) and 1855 (Scotland). The UK Ancestry visa route (for those with a UK-born grandparent) is one of the easiest pathways to UK residency. Full citizenship can follow after 5 years residency.";
+  steps=[
+    "SEARCH UK CIVIL RECORDS (FreeBMD): FreeBMD.org.uk provides free searchable indexes of England and Wales birth, marriage, and death registrations from 1837 onward. Once you find an entry, order a certified copy from the GRO at gro.gov.uk.",
+    "SEARCH SCOTLAND RECORDS (ScotlandsPeople): Visit ScotlandsPeople.gov.uk for digitized Scottish records including births, marriages, deaths, and census data. Credits required for downloads. Also search census records 1841-1911.",
+    town?"SEARCH COUNTY RECORDS FOR "+town.toUpperCase()+": Contact the local County Record Office in "+town+" for parish registers, probate records, and tithe maps.":"IDENTIFY YOUR ANCESTOR'S COUNTY: Check NARA naturalization files, Ellis Island records, or family documents to find the specific county in England, Scotland, Wales, or Northern Ireland.",
+    "SEARCH THE NATIONAL ARCHIVES (TNA): The National Archives (nationalarchives.gov.uk) holds millions of historical records. Search Discovery catalog for military records, probate, land records, and emigration documents. Many are freely downloadable.",
+    "APPLY FOR UK ANCESTRY VISA: If you have a grandparent born in the UK, you may qualify for a UK Ancestry Visa (5-year work authorization). Apply through gov.uk. After 5 years continuous residence, apply for Indefinite Leave to Remain, then citizenship."
+  ];
+  docs=["Ancestor's UK birth certificate (from GRO or ScotlandsPeople)","Ancestor's marriage certificate","Connecting birth certificates for each generation","Your US birth certificate","Your valid US passport","Evidence of UK-born grandparent for Ancestry Visa route"];
+  benefits=["UK Ancestry Visa grants right to work and live in the UK for 5 years","Path to British citizenship after 5 years residency","British passport — visa-free to 187 countries","Access to NHS, strong social infrastructure"];
+  resources=[
+    {name:"FreeBMD — free England/Wales civil records index",url:"https://www.freebmd.org.uk"},
+    {name:"GRO England — order certified certificates",url:"https://www.gro.gov.uk"},
+    {name:"ScotlandsPeople — official Scottish records",url:"https://www.scotlandspeople.gov.uk"},
+    {name:"UK National Archives — Discovery catalog",url:"https://www.nationalarchives.gov.uk"}
+  ];
+}
+else if(isPolish){
+  title="ANCESTOR RESEARCH: POLAND";
+  subtitle=name?"Your Polish Ancestor: "+ancLine:"Polish Ancestry Research Guide";
+  description="Polish records are among the most comprehensive in Central Europe, with parish registers dating to the 1600s and civil records from the late 1700s. Many are now digitized online. Poland does not currently offer automatic citizenship by descent, but Polish roots open doors to EU residency programs and ancestry visas.";
+  steps=[
+    "SEARCH GENETEKA (FREE POLISH DATABASE): Geneteka.genealodzy.pl is the largest free Polish genealogy database, maintained by the Polish Genealogical Society. Search baptism, marriage, and death records indexed from dozens of provinces.",
+    "SEARCH SZUKAJWARCHIWACH (NATIONAL ARCHIVES): Szukajwarchiwach.pl is the official Polish National Archives portal with millions of digitized records — civil registers, court files, and historical documents. Fully searchable and free.",
+    town?"TARGET RECORDS FOR "+town.toUpperCase()+": Search Geneteka and Szukajwarchiwach specifically for the powiat (district) of "+town+". Contact the Archiwum Panstwowe (state archive) in that region directly for older undigitized records.":"IDENTIFY YOUR ANCESTOR'S VILLAGE: Polish surnames are often region-specific. Search Moikrewni.pl and Geneteka to find which powiat (county) your surname is most common in. Check NARA naturalization files for the town name.",
+    "SEARCH FAMILYSEARCH POLAND COLLECTION: FamilySearch.org has millions of indexed and image-only Polish records. Search under 'Poland' for baptismal, marriage, and death registers from across all historical regions.",
+    "CONTACT THE ARCHIWUM PANSTWOWE: For records not found online, contact the relevant state archive directly. The directory of all Polish archives is at archiwa.gov.pl. Many archives accept email requests in English."
+  ];
+  docs=["Ancestor's Polish birth or baptism certificate","Ancestor's marriage and death records","Emigration record (if applicable)","Your connecting birth/marriage certificates","Your US birth certificate and passport"];
+  benefits=["Polish roots establish EU heritage for future visa pathways","Poland is an EU member with full Schengen access","Records research establishes provenance for other EU citizenship claims","Cultural and property restitution claims may be available"];
+  resources=[
+    {name:"Geneteka — free Polish genealogy database",url:"https://geneteka.genealodzy.pl"},
+    {name:"Szukajwarchiwach — Polish National Archives portal",url:"https://szukajwarchiwach.gov.pl"},
+    {name:"FamilySearch Poland Records",url:"https://www.familysearch.org/wiki/en/Poland_Genealogy"},
+    {name:"Polish Archives Directory",url:"https://www.archiwa.gov.pl"}
+  ];
+}
+else if(isHungarian){
+  title="ANCESTOR RESEARCH: HUNGARY";
+  subtitle=name?"Your Hungarian Ancestor: "+ancLine:"Hungarian Ancestry Research Guide";
+  description="Hungary has maintained civil registration since 1895 and detailed Catholic, Protestant, and Jewish parish records from the 1600s onward. Hungary offers citizenship by descent to anyone who can document Hungarian ancestry and pass a basic Hungarian language test.";
+  steps=[
+    "SEARCH FAMILYSEARCH HUNGARY: FamilySearch.org has the largest free collection of Hungarian church records — search the Hungary Vital Records collection for baptism, marriage, and burial records from hundreds of parishes.",
+    town?"SEARCH RECORDS FOR "+town.toUpperCase()+": Hungarian records are organized by parish and county (megye). Contact the Magyar Nemzeti Leveltar (Hungarian National Archives) at mnl.gov.hu for "+town+" records.":"IDENTIFY YOUR ANCESTOR'S VILLAGE (HELYSEG): Check Ellis Island records, NARA naturalization files, or family documents. The old Austro-Hungarian village names differ from modern Hungarian/Slovak/Romanian place names — use the Helysegnev Azonosito database at mnl.gov.hu.",
+    "SEARCH THE HUNGARIAN NATIONAL ARCHIVES (MNL): The Magyar Nemzeti Leveltar (mnl.gov.hu) holds civil and church records. Many county archives (megyei leveltar) have their own digitized collections. Register for free access.",
+    "RESEARCH THE JEWISH RECORDS DATABASE: If your ancestor was Jewish, search the Hungarian Jewish Archives (zsidoarchivum.hu) and the Yad Vashem database for pre-war records and community registers.",
+    "APPLY FOR HUNGARIAN CITIZENSHIP (HONOSITAS): Once ancestry is documented, apply through the Hungarian consulate. You must demonstrate basic Hungarian language skills. Processing: 6-18 months. Contact: konzuliszolgalat.gov.hu."
+  ];
+  docs=["Ancestor's Hungarian birth or baptism record","Ancestor's marriage and death records","Emigration record or ship manifest","Your connecting chain of birth/marriage certificates","Proof of Hungarian language proficiency (basic level)"];
+  benefits=["Full EU citizenship — live and work in all 27 EU countries","Hungarian passport — visa-free to 186 countries","No residency required for citizenship by descent","Citizenship passes to your children automatically"];
+  resources=[
+    {name:"Magyar Nemzeti Leveltar — Hungarian National Archives",url:"https://mnl.gov.hu"},
+    {name:"FamilySearch Hungary Vital Records",url:"https://www.familysearch.org/wiki/en/Hungary_Genealogy"},
+    {name:"Hungarian Consular Services (citizenship applications)",url:"https://konzuliszolgalat.gov.hu"}
+  ];
+}
+else if(isFrench){
+  title="ANCESTOR RESEARCH: FRANCE";
+  subtitle=name?"Your French Ancestor: "+ancLine:"French Ancestry Research Guide";
+  description="France has maintained civil registration since 1792 and detailed parish records (registres paroissiaux) from the 1600s. Most civil records are digitized and accessible online through departmental archives. France allows citizenship by descent with no generational limit if the connection can be documented.";
+  steps=[
+    "SEARCH FRENCH DEPARTMENTAL ARCHIVES: Each French department maintains an online archive (archives departementales). Go to archives.fr/annuaire to find the archive for your ancestor's department. Most have free online access to civil records 1792-1902.",
+    town?"SEARCH RECORDS FOR "+town.toUpperCase()+": Find the French department containing "+town+" (use laposte.fr/outils/rechercher-un-code-postal). Then visit that department's online archive for birth (naissances), marriage (mariages), and death (deces) records.":"IDENTIFY THE COMMUNE AND DEPARTMENT: Check old family documents, Ellis Island manifests, or NARA naturalization records for the French commune (village) and department. France has 96 metropolitan departments.",
+    "SEARCH ARCHIVESNATIONALES.CULTURE.GOUV.FR: The French National Archives hold records relating to emigration, naturalization, and some departmental records. Sala des inventaires (search tool) is available online.",
+    "REQUEST CERTIFIED COPIES FROM THE MAIRIE: Contact the Mairie (town hall) of your ancestor's commune to request certified copies (extraits d'actes d'etat civil). Write in French or use a translation service. Cost is typically free to EUR 15.",
+    "FILE FOR FRENCH CITIZENSHIP BY DESCENT: Contact the French consulate to begin the citizenship by descent application. You will need to prove your ancestor was a French citizen. Processing takes 12-18 months."
+  ];
+  docs=["Ancestor's French birth certificate (acte de naissance)","Ancestor's marriage and death certificates","All connecting generation certificates","Your US birth certificate with Apostille","Certified French translations of US documents"];
+  benefits=["Full EU citizenship and French passport","Visa-free travel to 186+ countries including the US","Live and work anywhere in the 27 EU member states","French healthcare (Securite Sociale) access as a citizen"];
+  resources=[
+    {name:"French Departmental Archives directory",url:"https://francearchives.gouv.fr/fr/annuaires/departements"},
+    {name:"Archives Nationales de France",url:"https://www.archives-nationales.culture.gouv.fr"},
+    {name:"French Ministry of Foreign Affairs — citizenship",url:"https://www.service-public.fr/particuliers/vosdroits/F2279"}
+  ];
+}
+else if(isPortuguese){
+  title="ANCESTOR RESEARCH: PORTUGAL";
+  subtitle=name?"Your Portuguese Ancestor: "+ancLine:"Portuguese Ancestry Research Guide";
+  description="Portugal has maintained detailed civil records since 1832 and Catholic parish registers from the 1500s. Portugal offers citizenship by descent for grandchildren and great-grandchildren of Portuguese citizens, and has a special Sephardic Jewish heritage citizenship program. The process is handled through the Conservatoria do Registo Civil.";
+  steps=[
+    "SEARCH ARQUIVO DISTRITAL: Each Portuguese district has an Arquivo Distrital (district archive) with civil and parish records. The Torre do Tombo national archive (digitarq.arquivos.pt) has the largest online collection — fully searchable and free.",
+    town?"SEARCH RECORDS FROM "+town.toUpperCase()+": Find the relevant Arquivo Distrital for "+town+" at arquivos.pt. Contact them directly for records not yet digitized. Most accept English correspondence.":"IDENTIFY YOUR ANCESTOR'S FREGUESIA (PARISH): Use the Torre do Tombo at digitarq.arquivos.pt and search under 'Registos Paroquiais'. Old US naturalization papers and ship manifests often record the Portuguese council (concelho) or parish.",
+    "SEARCH FAMILYSEARCH PORTUGAL: FamilySearch.org has indexed millions of Portuguese Catholic parish records. Filter by district and parish to find baptisms, marriages, and burials.",
+    "REQUEST CERTIFIED RECORDS FROM CONSERVATORIA: Contact the Conservatoria do Registo Civil in your ancestor's municipality to order certified birth and marriage records. These come with an apostille for international use.",
+    "APPLY FOR PORTUGUESE CITIZENSHIP AT CONSULATE: File the citizenship request (pedido de nacionalidade) at your regional Portuguese consulate or at the Conservatoria do Registo Civil in Lisbon. Required documents include certified ancestor records and your connecting chain."
+  ];
+  docs=["Ancestor's Portuguese birth certificate (certified)","Ancestor's marriage and death records","All connecting generation documents","Your US birth certificate with Apostille","Certified Portuguese translations if required"];
+  benefits=["Portuguese citizenship grants full EU rights","Portugal is consistently ranked among the best countries for expats","No residency required for citizenship by descent","Dual citizenship fully allowed — no need to give up US passport"];
+  resources=[
+    {name:"Torre do Tombo — Portuguese National Archive (free)",url:"https://digitarq.arquivos.pt"},
+    {name:"Portuguese Archives Network",url:"https://www.arquivos.pt"},
+    {name:"IRN — Portuguese Nationality Information",url:"https://www.irn.mj.pt/sections/irn/a_registral/registo-civil/docs-do-civil/nacionalidade/"}
+  ];
+}
+else if(isGreek){
+  title="ANCESTOR RESEARCH: GREECE";
+  subtitle=name?"Your Greek Ancestor: "+ancLine:"Greek Ancestry Research Guide";
+  description="Greece has civil registration records since 1856 and Orthodox Church records dating back centuries. Greek citizenship by descent (gennisi) has no time limit — you can claim through any generation. The process is managed through the Greek municipality (dimos) where your ancestor was registered.";
+  steps=[
+    "SEARCH FAMILYSEARCH GREECE: FamilySearch.org has Greek Orthodox church records and civil registration records. Search for your ancestor's name, island or region, and approximate birth year.",
+    town?"CONTACT THE DIMOS OF "+town.toUpperCase()+": The dimos (municipality) of "+town+" holds original birth, marriage, and death records. Contact them directly by post to request certified copies (pistopoiitika). Greek consulates can assist.":"IDENTIFY YOUR ANCESTOR'S DIMOS AND NOMOS: Each Greek citizen was registered in a specific dimos (municipality). Find this from old passports, documents, or family letters. The nomos (prefecture) narrows the search.",
+    "RESEARCH THROUGH GKAK (GENERAL STATE ARCHIVES): The Genika Archeia tou Kratous (gak.gr) is the Greek General State Archives. Regional branches (parasthmatika) hold local civil, notarial, and land records dating back centuries.",
+    "REQUEST ANCESTOR'S DIMOTOLOGIO ENTRY: The dimotologio is the family register held by the dimos. It records all births, marriages, and deaths registered in that municipality. A certified extract proves ancestry.",
+    "APPLY AT GREEK CONSULATE OR DIMOS: Submit your citizenship application at the relevant Greek dimos or through your regional Greek consulate. Required: certified dimotologio extract, connecting chain of documents, and Greek translations."
+  ];
+  docs=["Ancestor's Greek birth certificate or baptism record","Dimotologio extract from ancestral dimos","Ancestor's marriage and death records","Connecting birth certificates per generation","Your US birth certificate with Apostille","Certified Greek translations of non-Greek documents"];
+  benefits=["Full Greek and EU citizenship — access to 27 EU member states","Greek passport — visa-free to 186+ countries","No generational limit on citizenship claims","Citizenship passes to your children automatically"];
+  resources=[
+    {name:"Greek General State Archives (GAK)",url:"https://www.gak.gr"},
+    {name:"FamilySearch Greece Genealogy",url:"https://www.familysearch.org/wiki/en/Greece_Genealogy"},
+    {name:"Greek Ministry of Interior — citizenship",url:"https://www.ypes.gr/en/citizenship/"}
+  ];
+}
+else if(isCanadian){
+  title="ANCESTOR RESEARCH: CANADA";
+  subtitle=name?"Your Canadian Ancestor: "+ancLine:"Canadian Ancestry Research Guide";
+  description="Canada has maintained vital records from the mid-1800s. Library and Archives Canada (LAC) is the primary repository for federal records including census (1851-1926), passenger lists, and naturalization files. Provincial archives hold civil registration records (birth, marriage, death). Canada's citizenship path requires residency.";
+  steps=[
+    "SEARCH LIBRARY AND ARCHIVES CANADA (LAC): Go to bac-lac.gc.ca to search census records (1851-1926), passenger lists, military records, and naturalization files. Most are free and searchable by name.",
+    "SEARCH THE 1901, 1911, AND 1921 CANADIAN CENSUS: Census records show your ancestor's province, religion, occupation, birthplace, and family members. Available free at bac-lac.gc.ca/census.",
+    town?"CONTACT "+town.toUpperCase()+" PROVINCIAL ARCHIVES: Each province has a vital statistics office and provincial archives. Contact the archive for "+town+" to request birth, marriage, and death certificates.":"CONTACT THE RELEVANT PROVINCIAL ARCHIVE: Find the province where your ancestor lived and contact that province's Vital Statistics or Archives office. BC: bcarchives.gov.bc.ca | Ontario: archives.gov.on.ca | Quebec: banq.qc.ca",
+    "SEARCH FINDMYPAST AND ANCESTRY CANADA: Both Findmypast.com and Ancestry.ca have large Canadian genealogy collections including Henderson Directories, immigration records, and church registers.",
+    "CONNECT YOUR DOCUMENTS: Build a complete paper trail from your Canadian ancestor to yourself. If seeking Canadian citizenship, you must establish residency (3 out of 5 years). Contact IRCC at canada.ca/immigration."
+  ];
+  docs=["Ancestor's Canadian birth or baptism record","Census record showing ancestor in Canada","Ancestor's marriage and death records","Connecting birth/marriage certificates","Your US birth certificate and passport"];
+  benefits=["Canadian records help establish connection for Canadian residency pathway","Canada ranks among the world's best countries to live","Canadian citizenship eventually gives access to Commonwealth visa benefits","Strong social safety net and healthcare"];
+  resources=[
+    {name:"Library and Archives Canada (census, passenger lists)",url:"https://www.bac-lac.gc.ca/eng/census/Pages/census.aspx"},
+    {name:"IRCC — Canada Immigration and Citizenship",url:"https://www.canada.ca/en/immigration-refugees-citizenship.html"},
+    {name:"Ancestry.ca — Canadian genealogy database",url:"https://www.ancestry.ca"}
+  ];
+}
+else if(isSpanish){
+  title="ANCESTOR RESEARCH: SPAIN";
+  subtitle=name?"Your Spanish Ancestor: "+ancLine:"Spanish Ancestry Research Guide";
+  description="Spain has maintained civil registration since 1870 and detailed Catholic parish records from the 1500s. Spain offers citizenship by descent for grandchildren of Spaniards (Law of Democratic Memory, 2022), and has a special program for descendants of Spanish Civil War exiles. Records are held at the Registro Civil and provincial archives.";
+  steps=[
+    "SEARCH PARES (SPANISH NATIONAL ARCHIVES PORTAL): Portal de Archivos Espanoles (pares.mcu.es) provides free access to millions of digitized Spanish historical documents including emigration records, notarial files, and census data.",
+    town?"SEARCH RECORDS FROM "+town.toUpperCase()+": Contact the Registro Civil of "+town+" for civil records post-1870 and the parish church (parroquia) for earlier baptismal records. The Archivo Diocesano also holds older parish records.":"IDENTIFY YOUR ANCESTOR'S MUNICIPIO: Find the Spanish municipality from old documents, Ellis Island records, or family letters. The Municipio determines which Registro Civil and Archivo Provincial to contact.",
+    "CONTACT THE REGISTRO CIVIL: The Registro Civil in your ancestor's municipality holds civil birth, marriage, and death records from 1870+. Request certified copies (certificacion literal). Most accept written requests.",
+    "RESEARCH THE MEMORIAL DEMOCRATICA (LAW 20/2022): If your ancestor was exiled due to the Spanish Civil War (1936-1939), their descendants qualify under the Law of Democratic Memory. Contact the Ministerio de la Presidencia for this expedited pathway.",
+    "APPLY THROUGH SPANISH CONSULATE: File your citizenship application at your regional Spanish consulate with all certified and apostilled documents."
+  ];
+  docs=["Ancestor's Spanish birth certificate from Registro Civil","Ancestor's baptism record (pre-1870)","Marriage and death records","Connecting chain of certificates","Your US birth certificate with Apostille","Certified Spanish translations"];
+  benefits=["Full EU citizenship — access to all 27 EU member states","Spanish passport — visa-free to 190+ countries","Law of Democratic Memory offers expedited citizenship for exile descendants","Dual citizenship allowed with certain Latin American countries"];
+  resources=[
+    {name:"PARES — Spanish National Archives Portal (free)",url:"https://pares.mcu.es"},
+    {name:"Ministerio de Justicia — Registro Civil",url:"https://www.mjusticia.gob.es/es/ciudadanos/tramites/inscripciones"},
+    {name:"Law of Democratic Memory — Spanish Consulate",url:"https://www.exteriores.gob.es/en/ServiciosAlCiudadano/Pages/Nacionalidad.aspx"}
+  ];
+}
+else{
+  title="ANCESTOR RESEARCH: "+((path.country||path.name)||"").toUpperCase();
+  subtitle=name?"Your Ancestor: "+ancLine:"Ancestry Research Guide";
+  description="Begin your genealogical research by building a document chain from yourself back to your ancestor. Collect certified birth, marriage, and death records for every generation. Key databases: FamilySearch.org (free), Ancestry.com, and MyHeritage.com.";
+  steps=[
+    "SEARCH FAMILYSEARCH.ORG: The world's largest free genealogy database. Search by name, birth year, and country to find indexed records, images, and family trees submitted by other researchers.",
+    "SEARCH ANCESTRY.COM: The largest subscription genealogy database. Search immigration records, census data, vital records, and military files. Many public libraries offer free Ancestry access.",
+    "CONTACT NATIONAL ARCHIVES: Every country has a national archive. Search the World Archives Catalog at archives.gov/research/alic/reference/world-archives.html for the relevant country's archive contact information.",
+    "BUILD THE DOCUMENT CHAIN: Collect certified birth, marriage, and death certificates for every generation from your ancestor down to yourself. Each must be officially certified and, for international use, bear an Apostille stamp.",
+    "CONSULT A SPECIALIST: For complex cases, hire a genealogist accredited by the Association of Professional Genealogists (apgen.org) who specializes in your ancestral country."
+  ];
+  docs=["Ancestor's birth and baptism certificate","Ancestor's marriage and death records","Connecting records for each generation","Your US birth certificate with Apostille","Your valid US passport"];
+  benefits=["Documented ancestry is required for all citizenship by descent applications","Professional genealogical records have legal weight in citizenship proceedings","A complete document chain protects your eligibility and that of your children"];
+  resources=[
+    {name:"FamilySearch.org — free worldwide genealogy database",url:"https://www.familysearch.org"},
+    {name:"NARA — US National Archives (naturalization, immigration)",url:"https://www.archives.gov"},
+    {name:"Association of Professional Genealogists",url:"https://www.apgen.org"}
+  ];
+}
+return {title:title,subtitle:subtitle,description:description,steps:steps,docs:docs,benefits:benefits,resources:resources,note:note};
 }
 function generatePDF(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
@@ -865,6 +1049,113 @@ if(top){
   }
   y+=26;
 }
+var renderAncPage=function(ap,startY){
+  var ly=startY;
+  // Section title bar
+  ly=sh((ap.title||"ANCESTOR RESEARCH"),ly);ly+=5;
+  // Subtitle (ancestor name)
+  if(ap.subtitle){
+    ly=chk(ly,14);
+    doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(31,41,55);
+    var subLines=doc.splitTextToSize(ap.subtitle,CW);
+    subLines.forEach(function(sl){doc.text(sl,M,ly);ly+=6;});
+    ly+=3;
+  }
+  // Description
+  if(ap.description){
+    ly=chk(ly,16);
+    doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(75,85,99);
+    var descLines=doc.splitTextToSize(ap.description,CW);
+    descLines.forEach(function(dl){doc.text(dl,M,ly);ly+=5.5;});
+    ly+=5;
+  }
+  // Steps
+  if(ap.steps&&ap.steps.length){
+    ly=chk(ly,16);
+    doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(31,41,55);
+    doc.text("Step-by-Step Research Guide:",M,ly);ly+=8;
+    ap.steps.forEach(function(s,i){
+      var sLines=doc.splitTextToSize(s,CW-16);
+      var boxH=sLines.length*5.2+6;
+      ly=chk(ly,boxH+4);
+      // purple circle
+      doc.setFillColor(91,33,182);doc.circle(M+5,ly+5,5.5,"F");
+      doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(255,255,255);
+      doc.text(""+(i+1),M+5,ly+7,{align:"center"});
+      // light purple box
+      doc.setFillColor(243,232,255);
+      doc.roundedRect(M+13,ly,CW-13,boxH,2,2,"F");
+      doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(55,65,81);
+      sLines.forEach(function(sl,si){doc.text(sl,M+16,ly+5.5+si*5.2);});
+      ly+=boxH+4;
+    });
+    ly+=4;
+  }
+  // Documents needed
+  if(ap.docs&&ap.docs.length){
+    ly=chk(ly,16);
+    doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(31,41,55);
+    doc.text("Documents You Will Need:",M,ly);ly+=8;
+    ap.docs.forEach(function(d){
+      var dLines=doc.splitTextToSize(d,CW-8);
+      var dH=dLines.length*5.2+2;
+      ly=chk(ly,dH+4);
+      doc.setFillColor(34,197,94);doc.rect(M,ly-1,3,dH,"F");
+      doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(31,41,55);
+      dLines.forEach(function(dl,di){doc.text(dl,M+6,ly+4+di*5.2);});
+      ly+=dH+4;
+    });
+    ly+=4;
+  }
+  // Key benefits
+  if(ap.benefits&&ap.benefits.length){
+    ly=chk(ly,16);
+    doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(31,41,55);
+    doc.text("Key Benefits:",M,ly);ly+=8;
+    ap.benefits.forEach(function(b){
+      var bLines=doc.splitTextToSize(b,CW-8);
+      ly=chk(ly,12);
+      doc.setFillColor(91,33,182);doc.circle(M+2.5,ly+2,2.5,"F");
+      doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(55,65,81);
+      bLines.forEach(function(bl,bi){doc.text(bl,M+8,ly+4+bi*5);});
+      ly+=bLines.length*5+4;
+    });
+    ly+=4;
+  }
+  // Resources
+  if(ap.resources&&ap.resources.length){
+    ly=chk(ly,16);
+    doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(31,41,55);
+    doc.text("Key Resources & Direct Links:",M,ly);ly+=8;
+    ap.resources.forEach(function(res){
+      ly=chk(ly,20);
+      doc.setFillColor(240,253,250);doc.setDrawColor(20,184,166);
+      doc.roundedRect(M-2,ly,CW+4,18,2,2,"FD");
+      doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(13,148,136);
+      var resNameLines=doc.splitTextToSize(res.name,CW-6);
+      resNameLines.forEach(function(rl,ri){doc.text(rl,M+3,ly+5+ri*4.5);});
+      doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(107,114,128);
+      var urlLines=doc.splitTextToSize(res.url,CW-6);
+      var urlY=ly+5+resNameLines.length*4.5+1;
+      urlLines.forEach(function(ul,ui){doc.text(ul,M+3,urlY+ui*4);});
+      ly+=20;
+    });
+    ly+=4;
+  }
+  // Warning note
+  if(ap.note){
+    ly=chk(ly,20);ly+=2;
+    var noteLines=doc.splitTextToSize(ap.note,CW-8);
+    var noteH=noteLines.length*5+8;
+    doc.setFillColor(254,242,242);doc.setDrawColor(239,68,68);
+    doc.roundedRect(M-2,ly,CW+4,noteH,2,2,"FD");
+    doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(185,28,28);
+    noteLines.forEach(function(nl,ni){doc.text(nl,M+4,ly+6+ni*5);});
+    ly+=noteH+4;
+  }
+  footer(pageNum);
+  return ly;
+};
 // Research insight box (fills dead whitespace when research is available)
 if(hasResearch&&confirmedCount>0){
   var conf=window.__researchConfirmed;
@@ -998,46 +1289,11 @@ if(p.summary){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setText
 var _ancestors=(window.__state&&window.__state.ancestors)||[];
       var _rr=window.__relativeResearch||null;
       var _aProf=getAncestorProfileText(p,_ancestors,_rr,r);
-if(_aProf&&_aProf.lines&&_aProf.lines.length){
-  var _boxH=10+(_aProf.ancestor?5.5:0)+_aProf.lines.length*4.8+(_aProf.note?5.5:0)+2;
-  y=chk(y,_boxH+8);
-  doc.setFillColor(255,251,235);doc.setDrawColor(217,119,6);doc.rect(M,y,CW,_boxH,'FD');
-  doc.setFillColor(217,119,6);doc.rect(M,y,3,_boxH,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(146,64,14);
-  doc.text(cl(_aProf.title||'YOUR ANCESTOR RESEARCH'),M+6,y+5.5);
-  var _ly=y+10;
-  if(_aProf.ancestor){doc.setFont('helvetica','italic');doc.setFontSize(7.5);doc.setTextColor(120,53,15);doc.text(cl(_aProf.ancestor),M+6,_ly);_ly+=5.5;}
-  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(92,45,6);
-  _aProf.lines.forEach(function(_ln){doc.text(cl('- '+_ln),M+6,_ly);_ly+=4.8;});
-  if(_aProf.note){doc.setFont('helvetica','bold');doc.setFontSize(6.5);doc.setTextColor(185,28,28);doc.text(cl(_aProf.note),M+6,_ly+1);}
-  y+=_boxH+5;
+if(_aProf){
+  doc.addPage();pageNum++;var _apy=18;
+  _apy=renderAncPage(_aProf,_apy);
+  y=_apy;
 }
-
-// Steps
-y=chk(y,22);doc.setFillColor(r.researchConfirmed?5:109,r.researchConfirmed?120:40,r.researchConfirmed?87:217);doc.rect(M,y,CW,7,'F');
-doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('STEP-BY-STEP ACTION PLAN',M+3,y+5);y+=9;
-var steps=p.steps||(p.first_step?[p.first_step]:['Consult a specialized immigration attorney for this program','Gather all required documents listed below','Submit application through official government channels']);
-steps.forEach(function(s,si){
-  y=chk(y,16);
-  doc.setFillColor(r.researchConfirmed?5:91,r.researchConfirmed?120:33,r.researchConfirmed?87:182);doc.rect(M,y,7,7,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(255,255,255);doc.text(''+(si+1),M+3.5,y+5,{align:'center'});
-  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
-  var ls=doc.splitTextToSize(cl(s),CW-12);doc.text(ls,M+10,y+5);y+=Math.max(9,ls.length*4.5+3);
-});
-y+=2;
-// Documents
-y=chk(y,20);doc.setFillColor(5,150,105);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('KEY DOCUMENTS REQUIRED',M+3,y+5);y+=9;
-var docs=p.documents||(Array.isArray(p.requirements)?p.requirements:(p.requirements?[p.requirements]:['Birth certificates for each generation','Valid US passport','FBI background check (apostilled)']));
-docs.forEach(function(d){y=chk(y,8);doc.setFillColor(236,253,245);doc.rect(M,y,3,4,'F');doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);var ls=doc.splitTextToSize(cl(d),CW-10);doc.text(ls,M+7,y+3.5);y+=Math.max(6,ls.length*4.3+2);});
-y+=2;
-// Benefits
-y=chk(y,20);doc.setFillColor(217,119,6);doc.rect(M,y,CW,7,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);doc.text('KEY BENEFITS OF THIS CITIZENSHIP',M+3,y+5);y+=9;
-var bens=p.benefits||['Second passport for visa-free travel','Protection against political instability','Tax planning and diversification'];
-bens.forEach(function(b){y=chk(y,8);doc.setFillColor(255,247,237);doc.rect(M,y,3,4,'F');doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);var ls=doc.splitTextToSize(cl(b),CW-10);doc.text(ls,M+7,y+3.5);y+=Math.max(6,ls.length*4.3+2);});
-// Gov resource
-if(p.govUrl){y=chk(y,18);y+=3;doc.setFillColor(239,246,255);doc.rect(M,y,CW,16,'F');doc.setFillColor(37,99,235);doc.rect(M,y,4,16,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(37,99,235);doc.text('OFFICIAL GOVERNMENT RESOURCE',M+8,y+6);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);if(p.govName)doc.text(cl(p.govName),M+8,y+11);doc.setTextColor(37,99,235);doc.text(cl(p.govUrl).substring(0,75),M+8,y+15.5);}
-footer(pageNum);
-});
 // PERSONALIZED ANCESTOR RESEARCH — runs for ALL matched paths, not just top 5
 var _pAncs=(window.__state&&window.__state.ancestors)||[];
 if(_pAncs.length>0){
@@ -1049,47 +1305,10 @@ if(_pAncs.length>0){
       var _inTop=topR.some(function(tr){return tr.path.id===r.path.id;});
       if(!_inTop){
         doc.addPage();pageNum++;y=18;
-        y=sh('ANCESTOR RESEARCH: '+((r.path.country||r.path.name)||''). toUpperCase(),y);y+=4;
-        doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(31,41,55);
-        var _al=_ap.ancestor||'';
-        if(_al){doc.text(_al,M,y);y+=8;}
-        doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(55,65,81);
-        (_ap.lines||[]).forEach(function(_ln){
-          if(y>265){doc.addPage();pageNum++;y=18;}
-          y=wt('• '+_ln,M,y,CW,9.5);y+=2;
-        });
-        if(_ap.note){
-          y+=4;
-          doc.setFillColor(254,242,242);doc.setDrawColor(239,68,68);
-          doc.roundedRect(M-2,y-2,CW+4,18,2,2,'FD');
-          doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(185,28,28);
-          doc.text(_ap.note,M+4,y+5,{maxWidth:CW-6});y+=16;
-        }
-        footer(pageNum);
+        y=renderAncPage(_ap,y);
       }
     }
   });
-  // Canadian ancestry: no citizenship path exists, show genealogy resources
-  var _caAncs=_pAncs.filter(function(a){return (a.country||''). toLowerCase()==='canadian';});
-  if(_caAncs.length>0){
-    doc.addPage();pageNum++;y=18;
-    y=sh('ANCESTOR RESEARCH: CANADA',y);y+=4;
-    _caAncs.forEach(function(_ca){
-      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(31,41,55);
-      var _caNm=((_ca.firstName||'')+' '+(_ca.lastName||'')).trim();
-      var _caRl=_ca.relationship?_ca.relationship.charAt(0).toUpperCase()+_ca.relationship.slice(1):'';
-      var _caInfo=(_caRl?_caRl+' ':'')+(_caNm||'')+(_ca.town?', '+_ca.town:'')+(_ca.birthYear?', b.'+_ca.birthYear:'');
-      if(_caInfo){doc.text(_caInfo,M,y);y+=8;}
-    });
-    doc.setFont('helvetica','italic');doc.setFontSize(9);doc.setTextColor(107,114,128);
-    y=wt('Note: Canada does not have a citizenship-by-descent path for Americans. Your Canadian ancestor may trace back to UK, Irish, or French lineage — check records below to uncover further eligible ancestry.',M,y,CW,9);y+=6;
-    doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(55,65,81);
-    ['Library and Archives Canada (bac-lac.gc.ca) — census 1851–1921, immigration, naturalization records','Provincial vital statistics offices — birth, marriage and death certificates by province','Ancestry.ca — passenger lists, naturalization records, historical census','FamilySearch.org — free access to all major Canadian genealogy collections','Find My Past (findmypast.com) — UK/Irish immigrants to Canada, ship manifests'].forEach(function(_ln){
-      if(y>265){doc.addPage();pageNum++;y=18;}
-      y=wt('• '+_ln,M,y,CW,9.5);y+=2;
-    });
-    footer(pageNum);
-  }
 }
 // ANCESTRY RECORDS GUIDE
 doc.addPage();pageNum++;y=18;
