@@ -304,7 +304,8 @@
       <div class="mb-2">
         <label class="form-label" style="font-size:1rem;font-weight:700;color:#1F2937">Family &amp; Relative Information <span style="color:#9CA3AF;font-weight:400;font-size:0.82rem">(optional)</span></label>
         <p style="color:#6B7280;font-size:0.8rem;margin-bottom:0.5rem">Tell us about known relatives — grandparents, great-grandparents, their birthplaces and any documents you have. We'll include a personalized records guide in your action plan.</p>
-        <textarea id="p-relatives" class="form-input" rows="5" placeholder="e.g. Grandfather born in Italy around 1910. Grandmother from Ireland around 1915. Any documents or records you already have (naturalization papers, birth certificates, etc.)..."></textarea>
+        <div id="ancestor-cards-container" class="space-y-3 mb-2"></div>
+        <button type="button" onclick="addAncestorCard()" class="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 py-1 mt-2"><span class="text-base font-bold mr-1">+</span> Add Another Ancestor</button>
       </div>
     </div>
 
@@ -471,21 +472,103 @@ function renderIntakeCards(){
   var c=document.getElementById("intake-cards");if(c)c.innerHTML=html;
 }
 function saveNote(pathId,val){__state.notes[pathId]=val;}
+var __ancestorIdCounter=0;
+function getAncestors(){
+  var cards=document.querySelectorAll(".anc-card");
+  var result=[];
+  cards.forEach(function(card){
+    var id=card.dataset.acid;
+    function v(sfx){var el=document.getElementById("ac"+sfx+id);return el?el.value:"";}
+    result.push({
+      relationship:v("-rel-"),firstName:v("-fn-"),lastName:v("-ln-"),
+      country:v("-cou-"),town:v("-twn-"),birthYear:v("-by-"),
+      naturalization:v("-nat-"),
+      docs:Array.from(document.querySelectorAll(".acd"+id+":checked")).map(function(c){return c.value;})
+    });
+  });
+  return result;
+}
+function removeAncestorCard(id){
+  var c=document.getElementById("anc-card-"+id);
+  if(c)c.parentNode.removeChild(c);
+  if(!document.querySelector(".anc-card"))addAncestorCard();
+}
+function addAncestorCard(){
+  var id=++__ancestorIdCounter;
+  var co='<option value="">Country...</option>'+
+    '<option value="italian">Italy</option>'+
+    '<option value="irish">Ireland</option>'+
+    '<option value="german">Germany</option>'+
+    '<option value="polish">Poland</option>'+
+    '<option value="british">United Kingdom</option>'+
+    '<option value="french">France</option>'+
+    '<option value="portuguese">Portugal</option>'+
+    '<option value="spanish">Spain</option>'+
+    '<option value="greek">Greece</option>'+
+    '<option value="hungarian">Hungary</option>'+
+    '<option value="lithuanian">Lithuania</option>'+
+    '<option value="latvian">Latvia</option>'+
+    '<option value="estonian">Estonia</option>'+
+    '<option value="czech">Czech Republic</option>'+
+    '<option value="slovak">Slovakia</option>'+
+    '<option value="slovenian">Slovenia</option>'+
+    '<option value="croatian">Croatia</option>'+
+    '<option value="romanian">Romania</option>'+
+    '<option value="armenian">Armenia</option>'+
+    '<option value="israeli">Israel</option>'+
+    '<option value="mexican">Mexico</option>'+
+    '<option value="argentinian">Argentina</option>'+
+    '<option value="other">Other / Unsure</option>';
+  var inp='<input type="text" ';
+  var sel='<select ';
+  var cs=' class="form-input text-sm w-full"';
+  var lb='<label class="block text-xs font-semibold text-gray-600 mb-1">';
+  var html=
+    '<div id="anc-card-'+id+'" class="anc-card bg-white border border-gray-200 rounded-xl p-4 relative" data-acid="'+id+'">'+
+    '<button type="button" onclick="removeAncestorCard('+id+')" class="absolute top-3 right-3 text-gray-400 hover:text-red-400 text-xl font-bold leading-none">&times;</button>'+
+    '<div class="grid grid-cols-2 gap-3 mb-3">'+
+      '<div>'+lb+'Relationship</label>'+sel+'id="ac-rel-'+id+'"'+cs+'>'+
+        '<option value="">Select...</option>'+
+        '<option value="parent">Parent</option>'+
+        '<option value="grandparent">Grandparent</option>'+
+        '<option value="great-grandparent">Great-Grandparent</option>'+
+        '<option value="ggrandparent">Great-Great-Grandparent</option>'+
+      '</select></div>'+
+      '<div>'+lb+'Country of Origin</label>'+sel+'id="ac-cou-'+id+'"'+cs+'>'+co+'</select></div>'+
+    '</div>'+
+    '<div class="grid grid-cols-2 gap-3 mb-3">'+
+      '<div>'+lb+'First Name <span class="font-normal text-gray-400">(optional)</span></label>'+inp+'id="ac-fn-'+id+'"'+cs+' placeholder="First name"></div>'+
+      '<div>'+lb+'Last Name <span class="font-normal text-gray-400">(optional)</span></label>'+inp+'id="ac-ln-'+id+'"'+cs+' placeholder="Family name"></div>'+
+    '</div>'+
+    '<div class="grid grid-cols-2 gap-3 mb-3">'+
+      '<div>'+lb+'Town / Region of Origin</label>'+inp+'id="ac-twn-'+id+'"'+cs+' placeholder="Town or region"></div>'+
+      '<div>'+lb+'Approx. Birth Year</label>'+inp+'type="number" id="ac-by-'+id+'"'+cs+' placeholder="e.g. 1895" min="1800" max="1985"></div>'+
+    '</div>'+
+    '<div class="mb-3">'+lb+'US Naturalization Status</label>'+sel+'id="ac-nat-'+id+'"'+cs+'>'+
+      '<option value="unknown">Unknown</option>'+
+      '<option value="never">Never Naturalized (remained foreign citizen)</option>'+
+      '<option value="before-1948">Naturalized before 1948</option>'+
+      '<option value="after-1948">Naturalized 1948 or later</option>'+
+    '</select></div>'+
+    '<div>'+lb+'Documents Already Held</label>'+
+      '<div class="grid grid-cols-2 gap-y-1 gap-x-3 text-xs text-gray-700">'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="birth-cert"> Birth Certificate</label>'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="nat-papers"> Naturalization Papers</label>'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="ship-manifest"> Ship / Arrival Record</label>'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="passport"> Foreign Passport</label>'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="marriage-cert"> Marriage Certificate</label>'+
+        '<label class="flex items-center gap-1"><input type="checkbox" class="acd'+id+'" value="death-cert"> Death Certificate</label>'+
+      '</div>'+
+    '</div>'+
+    '</div>';
+  var ctr=document.getElementById("ancestor-cards-container");
+  if(ctr){var d=document.createElement("div");d.innerHTML=html;ctr.appendChild(d.firstChild);}
+}
+(function(){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",addAncestorCard);}else{addAncestorCard();}})();
 function requestResearchPDF(){
-  var relNotes=(document.getElementById('p-relatives')||{}).value||'';
-  var nm=(document.getElementById('p-name')||{}).value||'';
-  if(window.__relativeResearch&&window.__relativeResearch.links&&window.__relativeResearch.links.length>0){generatePDF();return;}
-  if(!relNotes||relNotes.trim().length<10){generatePDF();return;}
-  var overlay=document.getElementById('research-overlay');
-  if(overlay)overlay.style.display='flex';
-  if(window.__state)window.__state.relativeNotes=relNotes;
-window.__pdfRequest={relatives:relNotes,name:nm,ancestry:(__state.answers&&__state.answers[0])||[],requestedAt:new Date().toISOString()};
-  var polls=0;
-  var timer=setInterval(function(){
-    polls++;
-    if(window.__relativeResearch&&window.__relativeResearch.links){clearInterval(timer);if(overlay)overlay.style.display='none';generatePDF();}
-    if(polls>120){clearInterval(timer);if(overlay)overlay.style.display='none';generatePDF();}
-  },1000);
+  var ancestors=typeof getAncestors==="function"?getAncestors():[];
+  if(window.__state)window.__state.ancestors=ancestors;
+  generatePDF();
 }
 function updateResearchStatus(msg){var el=document.getElementById('research-status');if(el)el.innerHTML=(el.innerHTML?el.innerHTML+'<br>':'')+'✓ '+msg;}
 function completeResearch(data){window.__relativeResearch=data;}
@@ -543,82 +626,102 @@ function applyResearchRanking(results){
   });
 }
 
-function getAncestorProfileText(path,relNotes,rr,result){
-var pn=(path.name||'').toLowerCase();
-var pid=(path.id||'').toLowerCase();
-var notes=(relNotes||'').toLowerCase();
-var resLinks=rr&&rr.links?rr.links:[];
-function extractLine(keywords){
-  var lines=(relNotes||'').replace(/\n/g,'. ').split(/[.!]/);
-  for(var i=0;i<lines.length;i++){
-    var l=lines[i].toLowerCase();
-    for(var j=0;j<keywords.length;j++){if(l.indexOf(keywords[j])>-1)return lines[i].trim().substring(0,90);}
+function getAncestorProfileText(path,ancestors,rr,result){
+  var pn=(path.name||"").toLowerCase();
+  var pid=(path.id||"").toLowerCase();
+  if(!Array.isArray(ancestors)||!ancestors.length)return null;
+  var matched=ancestors.filter(function(a){
+    var c=(a.country||"").toLowerCase();
+    if(!c)return false;
+    if((pid.indexOf("ital")>-1||pn.indexOf("ital")>-1)&&c==="italian")return true;
+    if((pid.indexOf("irish")>-1||pn.indexOf("irish")>-1||pid.indexOf("ireland")>-1)&&(c==="irish"||c==="ireland"))return true;
+    if((pid.indexOf("german")>-1||pn.indexOf("german")>-1)&&c==="german")return true;
+    if((pid.indexOf("polish")>-1||pn.indexOf("polish")>-1)&&c==="polish")return true;
+    if((pid.indexOf("british")>-1||pn.indexOf("british")>-1||pid.indexOf("uk")>-1)&&(c==="british"||c==="uk"))return true;
+    if((pid.indexOf("french")>-1||pn.indexOf("french")>-1)&&c==="french")return true;
+    if((pid.indexOf("portug")>-1||pn.indexOf("portug")>-1)&&c==="portuguese")return true;
+    if((pid.indexOf("spanish")>-1||pn.indexOf("spanish")>-1||pid.indexOf("spain")>-1)&&c==="spanish")return true;
+    if((pid.indexOf("greek")>-1||pn.indexOf("greek")>-1)&&c==="greek")return true;
+    if((pid.indexOf("hungar")>-1||pn.indexOf("hungar")>-1)&&c==="hungarian")return true;
+    if((pid.indexOf("lithu")>-1||pn.indexOf("lithu")>-1)&&c==="lithuanian")return true;
+    if((pid.indexOf("latvi")>-1||pn.indexOf("latvi")>-1)&&c==="latvian")return true;
+    if((pid.indexOf("estoni")>-1||pn.indexOf("estoni")>-1)&&c==="estonian")return true;
+    if((pid.indexOf("czech")>-1||pn.indexOf("czech")>-1)&&c==="czech")return true;
+    if((pid.indexOf("slovak")>-1||pn.indexOf("slovak")>-1)&&(c==="slovak"||c==="slovakia"))return true;
+    if((pid.indexOf("sloven")>-1||pn.indexOf("sloven")>-1)&&c==="slovenian")return true;
+    if((pid.indexOf("croat")>-1||pn.indexOf("croat")>-1)&&c==="croatian")return true;
+    if((pid.indexOf("romani")>-1||pn.indexOf("romani")>-1)&&c==="romanian")return true;
+    if((pid.indexOf("armeni")>-1||pn.indexOf("armeni")>-1)&&c==="armenian")return true;
+    if((pid.indexOf("mexic")>-1||pn.indexOf("mexic")>-1)&&c==="mexican")return true;
+    if((pid.indexOf("argent")>-1||pn.indexOf("argent")>-1)&&c==="argentinian")return true;
+    return false;
+  });
+  if(!matched.length)return null;
+  var a=matched[0];
+  var fullName=((a.firstName||"")+" "+(a.lastName||"")).trim();
+  var rel=a.relationship||"";
+  var relLabel=rel?rel.charAt(0).toUpperCase()+rel.slice(1):"";
+  var nat=a.naturalization||"unknown";
+  var docs=a.docs||[];
+  var town=a.town||"";
+  var by=a.birthYear||"";
+  var ancLine="";
+  if(relLabel)ancLine+=relLabel;
+  if(fullName)ancLine+=(ancLine?" ":"")+fullName;
+  if(town)ancLine+=(ancLine?" - ":"")+town;
+  if(by)ancLine+=(ancLine?", b.":"b.")+by;
+  var c=(a.country||"").toLowerCase();
+  var lines=[];
+  var note="";
+  if(c==="italian"){
+    lines.push(town?"Vital records for "+town+": Antenati portal (antenati.cultura.gov.it) - 71M civil records":"Antenati portal (antenati.cultura.gov.it) - 71M+ Italian civil records 1820-1940");
+    lines.push("NARA naturalization: fold3.com and ancestry.com - petitions and declarations of intent");
+    lines.push("1920 US Census (ancestry.com) - lists year of immigration and naturalization status");
+    lines.push("Ship manifests 1895-1957: libertyellisfoundation.org and ancestry.com");
+    if(nat==="before-1948")note="CRITICAL: Ancestor naturalized before 1948 - Italian JUS path eligibility requires careful date verification.";
+    else if(nat==="never")lines.push("Never naturalized - strong indicator of Jure Sanguinis eligibility, pursue this path");
+    if(docs.indexOf("nat-papers")>-1)lines.push("Naturalization papers in hand - verify exact date against each descendant birth date");
+    if(docs.indexOf("ship-manifest")>-1)lines.push("Ship manifest in hand - confirms arrival date for timeline reconstruction");
+  }else if(c==="irish"){
+    lines.push(town?"Records for "+town+": IrishGenealogy.ie (free births/marriages/deaths 1864-1924)":"IrishGenealogy.ie - free civil registration records 1864-1924");
+    lines.push("Local archives: Cork, Galway, Dublin city and county archives for pre-1864 records");
+    lines.push("Foreign Birth Registration requires ancestor birth/death cert plus full descent chain");
+    lines.push("Griffith Valuation (1847-64): askaboutireland.ie for townland and property records");
+    if(docs.indexOf("birth-cert")>-1)lines.push("Birth certificate in hand - note townland to identify correct parish records");
+  }else if(c==="german"){
+    lines.push("Archion.de and Matricula-Online.eu for Lutheran and Catholic church records");
+    lines.push("Deutsche Auswanderer-Datenbank (DAB): auswanderer-bdb.de for emigration records");
+    lines.push("BVA (bva.bund.de) to apply for Article 116 citizenship restoration");
+    if(town)lines.push("Standesamt in "+town+" holds civil records from 1876 onward");
+    lines.push("FamilySearch.org has extensive German church record collections - free access");
+  }else if(c==="polish"){
+    lines.push("Geneteka.genealodzy.pl - indexed Polish vital records, free, enormous database");
+    lines.push("szukajwarchiwach.pl - Polish State Archives digital collections");
+    lines.push("Polish citizenship by descent requires documented unbroken line via voivodeship office");
+    if(town)lines.push("Records for "+town+": determine partition (Russian, Prussian, Austrian) for correct archive");
+  }else if(c==="british"||c==="uk"){
+    lines.push("GRO UK (gro.gov.uk): certified birth/marriage/death certificates from 1837 onward");
+    lines.push("FindMyPast.co.uk and Ancestry.co.uk: census, military, and parish records");
+    lines.push("British descent citizenship limited to one generation born abroad - check UKVisas rules");
+    if(town)lines.push("County record office for "+town+" holds pre-1837 parish records and wills");
+  }else if(c==="french"){
+    lines.push("Archives departementales (each dept has its own portal) for civil and parish records");
+    lines.push("French citizenship by descent available if unbroken documented line from French citizen");
+    lines.push("Service Central de la Nationalite at Paris Tribunal for declaration of nationality");
+  }else if(c==="portuguese"){
+    lines.push("Arquivo Nacional Torre do Tombo (antt.dglab.gov.pt) - national archive records");
+    lines.push("Portuguese consulate for citizenship by descent application and required document list");
+    lines.push("Sephardic Jewish heritage path: separate simplified process via Portuguese government");
+  }else{
+    if(rr&&rr.links&&rr.links.length){
+      lines.push("Research resources identified for this citizenship path:");
+      rr.links.slice(0,3).forEach(function(lk){lines.push((lk.title||lk.url||"").substring(0,80));});
+    }else{
+      lines.push("Gather vital records (birth, marriage, death) for each generation in the descent line");
+      lines.push("Contact the relevant consulate to confirm required documentation for this path");
+    }
   }
-  return '';
-}
-// ITALIAN
-if(pn.indexOf('italian')>-1||pid.indexOf('italy')>-1){
-  var hit=notes.indexOf('sicil')>-1||notes.indexOf('italy')>-1||notes.indexOf('italian')>-1||notes.indexOf('kocchi')>-1;
-  if(hit){
-    var anc=extractLine(['sicil','kocchi','italy','italian'])||'Italian ancestor identified in your family notes';
-    return {title:'ITALIAN ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc,
-    lines:['ARCHIVE: Antenati Portal (FREE) - antenati.cultura.gov.it - 71M+ Sicilian records from 1820',
-    'ARRIVAL: Search Ellis Island - libertyellisfoundation.org - try surname spelling variants (Cocchi, Cochi)',
-    'NATURALIZATION: 1920 US Census lists year naturalized - search free at FamilySearch.org/1920census',
-    'NARA RECORDS: Request naturalization docs at archives.gov/research/immigration/naturalization',
-    'COMUNE: Once Sicilian town confirmed, email Ufficio Anagrafe for certified birth certificate'],
-    note:'CRITICAL: Ancestor must have naturalized AFTER your parent was born - this determines eligibility'};
-  }
-}
-// IRISH
-if(pn.indexOf('irish')>-1||pid.indexOf('ireland')>-1){
-  var hit2=notes.indexOf('ireland')>-1||notes.indexOf('irish')>-1||notes.indexOf("o'brien")>-1||notes.indexOf('obrien')>-1||notes.indexOf('cork')>-1;
-  if(hit2){
-    var anc2=extractLine(['ireland','irish',"o'brien",'obrien','cork'])||'Irish ancestor identified in your family notes';
-    return {title:'IRISH ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc2,
-    lines:['ARCHIVE: IrishGenealogy.ie (FREE) - civil births 1864-1924, deaths 1878-1969 - search by surname + county',
-    'CORK RECORDS: Cork City & County Archives (corkarchives.ie) - additional family history collections',
-    'CATHOLIC RECORDS: Diocese of Cork & Ross church records to 1880 available at irishgenealogy.ie',
-    'APPLICATION: Foreign Births Register at fbr.dfa.ie - current wait approximately 9 months',
-    'DOCUMENTS NEEDED: Irish ancestor birth cert + marriage cert + your parent birth cert + your birth cert'],
-    note:null};
-  }
-}
-// BRITISH
-if(pn.indexOf('british')>-1||pid.indexOf('ancestry_uk')>-1){
-  var hit3=notes.indexOf('pitman')>-1||notes.indexOf('nova scotia')>-1||notes.indexOf('canada')>-1||notes.indexOf('british')>-1||notes.indexOf('england')>-1;
-  if(hit3){
-    var anc3=extractLine(['pitman','nova scotia','canada','british','england'])||'British/Canadian ancestor identified in your family notes';
-    return {title:'BRITISH ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc3,
-    lines:['CANADA RECORDS: Library and Archives Canada (bac-lac.gc.ca) - NS census and immigration records FREE',
-    'NOVA SCOTIA VITAL STATS: novascotia.ca/sns/access/birth-death-marriage - civil records from 1864',
-    'UK ORIGINS: Trace Pitman line to UK via FamilySearch.org NS census - look for UK birthplace in census',
-    'GRO UK: Once UK birth confirmed, order cert at gro.gov.uk/gro/content/certificates',
-    'APPLICATION: gov.uk/apply-citizenship-british-parent - requires proof of UK-born parent or grandparent'],
-    note:'NOTE: Must confirm UK-born grandparent - Nova Scotia Pitman line needs tracing back to confirm UK birth'};
-  }
-}
-// GERMAN
-if(pn.indexOf('german')>-1||pid.indexOf('germany')>-1){
-  var hit4=notes.indexOf('german')>-1||notes.indexOf('germany')>-1||notes.indexOf('bavaria')>-1||notes.indexOf('deutsch')>-1;
-  if(hit4){
-    var anc4=extractLine(['german','germany','bavaria','deutsch'])||'German ancestor identified in your family notes';
-    return {title:'GERMAN ANCESTRY - WHAT WE FOUND & YOUR NEXT STEPS',ancestor:anc4,
-    lines:['EMIGRATION DB: Deutsche Auswanderer-Datenbank at bba.de - millions of German emigrant records',
-    'CHURCH RECORDS: Archion.de and Matricula-online.eu - digitized German parish records (Kirchenbuecher)',
-    'CIVIL RECORDS: Contact Standesamt (registry office) in ancestral town for Geburts/Heirats/Sterbeurkunden',
-    'APPLICATION: German Federal Administration Office (BVA) - bva.bund.de for citizenship restoration',
-    'NAZI PERSECUTION ROUTE: If ancestors lost citizenship 1933-1945, fast-track route available via Art.116 GG'],
-    note:null};
-  }
-}
-// Generic research confirmed
-if(result&&result.researchConfirmed&&resLinks.length>0){
-  var genLines=[];
-  resLinks.slice(0,4).forEach(function(lnk){if(lnk.title&&lnk.url)genLines.push(lnk.title.substring(0,60)+' - '+lnk.url.substring(0,50));});
-  if(genLines.length>0)return {title:'ANCESTRY RESEARCH FINDINGS FOR THIS PATH',ancestor:'',lines:genLines,note:null};
-}
-return null;
+  return {title:"YOUR ANCESTOR RESEARCH",ancestor:ancLine,lines:lines,note:note};
 }
 function generatePDF(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
@@ -638,7 +741,7 @@ function sh(title,y,r,g,b){r=r||91;g=g||33;b=b||182;doc.setFillColor(r,g,b);doc.
 function chk(y,need){if(y+(need||20)>PH-16){footer(pageNum);doc.addPage();pageNum++;return 18;}return y;}
 var nm=cl((document.getElementById('p-name')||{}).value||'Client');
 var em=cl((document.getElementById('p-email')||{}).value||'');
-var rel=cl((document.getElementById('p-relatives')||{}).value||'');
+var rel=(window.__state&&window.__state.ancestors&&window.__state.ancestors.length)?"has-data":"";
 var today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 var rawResults=__state.results||[];
 // Apply research-based re-ranking if research is available
@@ -816,9 +919,9 @@ y+=21;
 if(p.summary){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);y=wt(p.summary,M,y,CW,4.5);y+=4;}
 
 // Ancestor Research Profile Box
-var _relNotes=(window.__state&&window.__state.relativeNotes)||(document.getElementById('p-relatives')?document.getElementById('p-relatives').value:'')||'';
-var _rr=window.__relativeResearch||null;
-var _aProf=getAncestorProfileText(p,_relNotes,_rr,r);
+var _ancestors=(window.__state&&window.__state.ancestors)||[];
+      var _rr=window.__relativeResearch||null;
+      var _aProf=getAncestorProfileText(p,_ancestors,_rr,r);
 if(_aProf&&_aProf.lines&&_aProf.lines.length){
   var _boxH=10+(_aProf.ancestor?5.5:0)+_aProf.lines.length*4.8+(_aProf.note?5.5:0)+2;
   y=chk(y,_boxH+8);
