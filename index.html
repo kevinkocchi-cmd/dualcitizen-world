@@ -740,7 +740,7 @@ var name=anc.name||"";
 var town=anc.town||anc.birthplace||"";
 var rel=anc.relationship||anc.relation||anc.rel||"";
 var yr=anc.year||anc.birthYear||"";
-var ancLine=name?(name+(rel?" ("+rel+")")+(town?", born in "+town:"")+(yr?", c."+yr:"")):"(unknown name)";
+var ancLine=name?(name+(rel?" ("+rel+")":"")+(town?", born in "+town:"")+(yr?", c."+yr:"")):"(unknown name)";
 var title,subtitle,description,steps,docs,benefits,resources,note;
 if(isItalian){
   title="ANCESTOR RESEARCH: ITALY";
