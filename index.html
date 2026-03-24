@@ -1285,6 +1285,90 @@ qs.forEach(function(q,qi){
 y+=21;
 if(p.summary){doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(75,85,99);y=wt(p.summary,M,y,CW,4.5);y+=4;}
 
+// PATH-SPECIFIC CONTENT: Steps, Documents, Government Resource, First Step, Benefits
+// Step-by-step action plan
+if(p.steps&&p.steps.length>0){
+y=chk(y,20);
+doc.setFillColor(91,33,182);doc.rect(M,y,CW,9,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);
+doc.text('YOUR '+p.steps.length+'-STEP ACTION PLAN',M+6,y+6.5);
+y+=11;
+p.steps.forEach(function(step,si){
+y=chk(y,22);
+doc.setFillColor(91,33,182);doc.circle(M+5.5,y+6,5,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);
+doc.text(''+(si+1),M+5.5,y+8,{align:'center'});
+doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
+var sl=doc.splitTextToSize(cl(step),CW-16);
+doc.text(sl,M+14,y+6);
+y+=Math.max(16,6+sl.length*4.5)+3;
+if(si<p.steps.length-1){doc.setDrawColor(229,231,235);doc.line(M+13,y-2,PW-M,y-2);}
+});
+y+=4;
+}
+// Required documents
+if(p.documents&&p.documents.length>0){
+y=chk(y,20);
+doc.setFillColor(5,150,105);doc.rect(M,y,CW,8,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(255,255,255);
+doc.text('REQUIRED DOCUMENTS ('+p.documents.length+')',M+6,y+5.5);
+y+=10;
+p.documents.forEach(function(ditem,di){
+y=chk(y,8);
+doc.setFillColor(di%2===0?236:255,di%2===0?253:255,di%2===0?245:255);
+doc.rect(M,y,CW,7,'F');
+doc.setFillColor(5,150,105);doc.rect(M,y,3,7,'F');
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(31,41,55);
+var dl=doc.splitTextToSize(cl(ditem),CW-10);
+doc.text(dl[0].substring(0,85),M+6,y+4.5);
+y+=7;
+});
+y+=6;
+}
+// Official government resource
+if(p.govUrl&&p.govName){
+y=chk(y,18);
+doc.setFillColor(239,246,255);doc.rect(M,y,CW,18,'F');
+doc.setFillColor(37,99,235);doc.rect(M,y,4,18,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(37,99,235);
+doc.text('OFFICIAL GOVERNMENT RESOURCE',M+8,y+7);
+doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
+doc.text(cl(p.govName).substring(0,65),M+8,y+12.5);
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(37,99,235);
+doc.text((p.govUrl||'').substring(0,72),M+8,y+17);
+y+=22;
+}
+// Immediate next step callout box
+if(p.first_step){
+y=chk(y,26);
+doc.setFillColor(255,247,237);doc.rect(M,y,CW,26,'F');
+doc.setFillColor(217,119,6);doc.rect(M,y,4,26,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(217,119,6);
+doc.text('YOUR IMMEDIATE NEXT STEP',M+8,y+7);
+doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(31,41,55);
+var fsl=doc.splitTextToSize(cl(p.first_step),CW-14);
+doc.text(fsl,M+8,y+13);
+y+=Math.max(26,13+fsl.length*4.5+4);
+}
+// Key benefits
+if(p.benefits&&p.benefits.length>0){
+y=chk(y,20);
+doc.setFillColor(243,232,255);doc.rect(M,y,CW,8,'F');
+doc.setFillColor(91,33,182);doc.rect(M,y,4,8,'F');
+doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(91,33,182);
+doc.text('KEY BENEFITS OF THIS PROGRAM',M+8,y+5.5);
+y+=10;
+p.benefits.forEach(function(b,bi){
+y=chk(y,9);
+doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);
+var bl=doc.splitTextToSize(cl(b),CW-14);
+doc.setFillColor(109,40,217);doc.circle(M+5,y+3.5,2,'F');
+doc.text(bl,M+10,y+4);
+y+=Math.max(8,bl.length*4.3+3);
+});
+y+=4;
+}
+
 // Ancestor Research Profile Box
 var _ancestors=(window.__state&&window.__state.ancestors)||[];
       var _rr=window.__relativeResearch||null;
@@ -1299,11 +1383,12 @@ if(_aProf){
 var _pAncs=(window.__state&&window.__state.ancestors)||[];
 if(_pAncs.length>0){
   var _pDone={};
-  results.forEach(function(r){
-    var _ap=getAncestorProfileText(r.path,_pAncs,null,null);
-    if(_ap&&!_pDone[r.path.id]){
-      _pDone[r.path.id]=true;
-      var _inTop=topR.some(function(tr){return tr.path.id===r.path.id;});
+  (window.__PATHS||[]).forEach(function(pathObj){
+    if(_pDone[pathObj.id]) return;
+    var _ap=getAncestorProfileText(pathObj,_pAncs,null,null);
+    if(_ap){
+      _pDone[pathObj.id]=true;
+      var _inTop=topR.some(function(tr){return tr.path.id===pathObj.id;});
       if(!_inTop){
         doc.addPage();pageNum++;y=18;
         y=renderAncPage(_ap,y);
