@@ -1,0 +1,8 @@
+{
+  "name": "dualcitizen-world",
+  "version": "1.0.0",
+  "description": "Dual Citizen World - Citizenship by descent research tool",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0"
+  }
+}
