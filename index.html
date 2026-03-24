@@ -671,7 +671,7 @@ function performLiveResearch(ancestors,onComplete){
     var co=(anc.country||'').toLowerCase().trim();
     var tw=(anc.town||anc.birthplace||'').trim();
     var yr=((anc.year||anc.birthYear||'')+'').trim();
-    var parts=nm.split(/s+/);
+    var parts=nm.split(" ");
     var fnR=parts[0]||'',lnR=parts[parts.length-1]||'';
     var fn=enc(fnR),ln=enc(lnR);
     sp(pct,'Searching records for '+(nm||co||'your ancestor')+'...');
