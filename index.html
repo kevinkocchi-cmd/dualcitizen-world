@@ -709,7 +709,7 @@ var pc=(path.country||path.name||"").toLowerCase();
 var anc=null;
 var isItalian=false,isGerman=false,isIrish=false,isBritish=false;
 var isPolish=false,isHungarian=false,isFrench=false,isPortuguese=false;
-var isGreek=false,isCanadian=false,isSpanish=false;
+var isGreek=false,isCanadian=false,isSpanish=false,isLithuanian=false,isRomanian=false,isIsraeli=false;
 var pathIsItalian=pc.indexOf("ital")>-1&&pc.indexOf("digital")<0;
 var pathIsGerman=pc.indexOf("german")>-1||pc.indexOf("germany")>-1;
 var pathIsIrish=pc.indexOf("irish")>-1||pc.indexOf("ireland")>-1;
@@ -721,6 +721,9 @@ var pathIsPortuguese=pc.indexOf("portug")>-1;
 var pathIsGreek=pc.indexOf("greek")>-1||pc.indexOf("greece")>-1;
 var pathIsCanadian=pc.indexOf("canad")>-1;
 var pathIsSpanish=pc.indexOf("spain")>-1||pc.indexOf("spanish")>-1;
+var pathIsLithuanian=pc.indexOf("lithu")>-1||pc.indexOf("latvia")>-1;
+var pathIsRomanian=pc.indexOf("roman")>-1;
+var pathIsIsraeli=pc.indexOf("israel")>-1;
 for(var i=0;i<ancestors.length;i++){
   var ac=(ancestors[i].country||"").toLowerCase().trim();
   if(pathIsItalian&&(ac==="italian"||ac==="italy")){anc=ancestors[i];isItalian=true;break;}
@@ -734,6 +737,9 @@ for(var i=0;i<ancestors.length;i++){
   if(pathIsGreek&&(ac==="greek"||ac==="greece")){anc=ancestors[i];isGreek=true;break;}
   if(pathIsCanadian&&(ac==="canadian"||ac==="canada")){anc=ancestors[i];isCanadian=true;break;}
   if(pathIsSpanish&&(ac==="spanish"||ac==="spain")){anc=ancestors[i];isSpanish=true;break;}
+  if(pathIsLithuanian&&(ac==="lithuanian"||ac==="latvia"||ac==="latvian"||ac==="estonian"||ac==="estonia")){anc=ancestors[i];isLithuanian=true;break;}
+  if(pathIsRomanian&&(ac==="romanian"||ac==="romania")){anc=ancestors[i];isRomanian=true;break;}
+  if(pathIsIsraeli&&(ac==="israeli"||ac==="israel"||ac==="jewish")){anc=ancestors[i];isIsraeli=true;break;}
 }
 if(!anc)return null;
 var name=anc.name||"";
@@ -763,7 +769,7 @@ if(isItalian){
     {name:"Ellis Island Records (find ancestor town)",url:"https://www.libertyellisfoundation.org"},
     {name:"Find your Italian Consulate",url:"https://www.esteri.it/en/servizi-consolari-e-visti/italiani-all-estero/"}
   ];
-  if(!town)note="ACTION NEEDED: You must identify the exact comune (birth town) before requesting records. Check Ellis Island manifests, NARA naturalization files (archives.gov), or old family documents for the town name.";
+  note=anc&&anc.naturalization&&anc.naturalization!=="never"&&anc.naturalization!=="unknown"?"CRITICAL  --  NATURALIZATION DATE FOR "+(name?name.toUpperCase():"YOUR ANCESTOR")+": You indicated this ancestor naturalized '"+anc.naturalization+"'. Jure Sanguinis requires NO ancestor naturalized BEFORE their child was born. Request the exact date from USCIS Genealogy (uscis.gov/genealogy)  --  this single fact determines your eligibility.":(!town?"ACTION NEEDED: You must identify the exact comune (birth town) before requesting records. Check Ellis Island manifests, NARA naturalization files (archives.gov), or old family documents for the town name.":"");
 }
 else if(isGerman){
   title="ANCESTOR RESEARCH: GERMANY";
@@ -961,6 +967,72 @@ else if(isSpanish){
     {name:"Ministerio de Justicia — Registro Civil",url:"https://www.mjusticia.gob.es/es/ciudadanos/tramites/inscripciones"},
     {name:"Law of Democratic Memory — Spanish Consulate",url:"https://www.exteriores.gob.es/en/ServiciosAlCiudadano/Pages/Nacionalidad.aspx"}
   ];
+}
+else if(isLithuanian){
+  title="ANCESTOR RESEARCH: LITHUANIA & BALTIC STATES";
+  subtitle=name?"Your Lithuanian/Baltic Ancestor: "+ancLine:"Lithuanian & Baltic Ancestry Research Guide";
+  description="Lithuania, Latvia, and Estonia restored independence in 1990. Lithuania offers citizenship to descendants of pre-1940 citizens who lost citizenship through Soviet/Nazi occupation. Records include civil registrations from 1795, detailed parish books, and Jewish community records. The Jewish community of Lithuania (Litvaks) has exceptional genealogical resources worldwide.";
+  steps=[
+    name?"SEARCH EPAVELDAS.LT FOR "+name.toUpperCase()+": Visit epaveldas.lt (Lithuania's national digital heritage portal) for FREE digitized church books, civil records, and historical photographs."+(town?" Filter by "+town+" region for fastest results.":""):"SEARCH EPAVELDAS.LT (FREE): Lithuania's national digital heritage portal has thousands of digitized church books, civil records, and historical photographs from all regions.",
+    town?"CONTACT THE LCVA IN VILNIUS FOR "+town.toUpperCase()+" RECORDS: The Lithuanian State Historical Archives (archyvai.lt/LCVA) holds civil records from 1795 for "+town+". Request certified extracts (irasai) for your citizenship application. Email: lcva@archyvai.lt":"CONTACT THE LITHUANIAN STATE HISTORICAL ARCHIVES (LCVA): The LCVA (archyvai.lt/LCVA) in Vilnius holds civil records from 1795 and church books. Email lcva@archyvai.lt with your ancestor's name, town, and approximate birth year.",
+    "SEARCH FAMILYSEARCH.ORG FOR FREE LITHUANIAN/BALTIC RECORDS: FamilySearch has millions of digitized Lithuanian, Latvian, and Estonian vital records. Search by ancestor name, birth year, and parish."+(yr?" Focus on records from around "+yr+".":""),
+    "CHECK JEWISH LITHUANIAN RECORDS (IF APPLICABLE): If your ancestor was Jewish Lithuanian, search LitvakSIG (litvaksig.org) and JewishGen (jewishgen.org) for exceptional FREE databases of Jewish Baltic records including community registers and yizkor books.",
+    "VERIFY PRE-1940 CITIZENSHIP: Lithuanian citizenship restoration requires proving your ancestor held Lithuanian citizenship before June 15, 1940 (Soviet occupation date). Census records, voter lists, and school records from 1918-1940 can establish this.",
+    "APPLY THROUGH LITHUANIAN EMBASSY: Contact the Lithuanian Embassy or Consulate with your complete document chain, certified translations, and apostilles. The Migration Department (migracija.lt) processes citizenship restoration applications."
+  ];
+  docs=["Ancestor's Lithuanian civil birth or baptism record","Connecting birth/marriage/death records for each generation","Evidence of pre-1940 Lithuanian citizenship (census, voter list, school records)","Your US birth certificate with Apostille","Certified Lithuanian translations of all foreign documents","Current Lithuanian criminal background check"];
+  benefits=["Lithuanian passport = EU citizenship with rights to live/work in all 27 EU countries","Visa-free access to 180+ countries including Schengen Area, UK, USA","Descendants of Litvak (Jewish Lithuanian) ancestors have exceptional documentary resources","Dual citizenship with USA is permitted for Lithuanian citizenship restoration cases"];
+  resources=[
+    {name:"Epaveldas.lt  --  FREE Lithuanian Digital Heritage Portal",url:"https://www.epaveldas.lt"},
+    {name:"Lithuanian State Historical Archives (LCVA)",url:"https://www.archyvai.lt/LCVA"},
+    {name:"LitvakSIG  --  Jewish Lithuanian Genealogy (FREE)",url:"https://www.litvaksig.org"},
+    {name:"Migration Department of Lithuania  --  Citizenship",url:"https://www.migracija.lt/en/citizenship"}
+  ];
+  note="KEY RULE: Your ancestor must have held Lithuanian citizenship BEFORE June 15, 1940. If they emigrated before that date and never renounced, their descendants may qualify.";
+}
+else if(isRomanian){
+  title="ANCESTOR RESEARCH: ROMANIA";
+  subtitle=name?"Your Romanian Ancestor: "+ancLine:"Romanian Ancestry Research Guide";
+  description="Romania offers citizenship restoration (redobandire) to people who were Romanian citizens before 1940 and their descendants, who lost citizenship involuntarily due to WWII, communist regime, or forced territorial transfers. Under Romanian Citizenship Law Articles 10-11, descendants to the third generation (great-grandchildren) can apply. Romania became EU member in 2007.";
+  steps=[
+    name?"SEARCH FAMILYSEARCH FOR "+name.toUpperCase()+": FamilySearch.org (FREE) has millions of digitized Romanian civil records, Orthodox church books, and census data."+(yr?" Search for records around "+yr+".":""):"SEARCH FAMILYSEARCH.ORG (FREE): The largest free genealogy database has extensive Romanian civil records, Orthodox church books, Greek Catholic registers, and census data.",
+    town?"TARGET SERVICIUL JUDETEAN ANR FOR "+town.toUpperCase()+": The county branch (Serviciul Judetean) of Arhivele Nationale covers "+town+". Contact them for certified birth, marriage, and death certificates from 1865 onward. Find your county branch at arhivelenationale.ro.":"CONTACT ARHIVELE NATIONALE ALE ROMANIEI (ANR): Romanian civil records from 1865 are held at county archives (Serviciul Judetean ANR). Visit arhivelenationale.ro to find the correct county archive for your ancestor's birthplace.",
+    "CONFIRM WHEN ROMANIAN CITIZENSHIP WAS LOST: Citizenship restoration applies to ancestors who lost Romanian citizenship between 1940-1989 due to WWII transfers, communist regime, or forced emigration. Gather documentation showing Romanian origin (census, property records, school records from before loss of citizenship).",
+    "GATHER THE FULL GENERATION CHAIN: You need certified birth, marriage, and death records linking your Romanian ancestor to you. Each document must be certified by the archive, translated by an authorized translator, and apostilled.",
+    "APPLY THROUGH MINISTERUL JUSTITIEI  --  DIRECTIA CETATENIE: Submit your application to the Romanian Ministry of Justice Citizenship Directorate (ministerul-justitiei.ro/cetatenie). Processing typically takes 1-2 years. Applications can also be submitted at Romanian consulates.",
+    "CONTACT ROMANIAN CONSULATE FOR CURRENT REQUIREMENTS: Romanian citizenship restoration requirements and processing times vary. Contact your regional Romanian consulate for the current application package and timeline."
+  ];
+  docs=["Romanian ancestor's birth certificate from Serviciul Judetean ANR","Pre-1940 census or civil records establishing Romanian origin","Connecting birth/marriage/death records for each generation to you","Your US birth certificate with Apostille","Authorized Romanian translations of all documents","Romanian criminal background check (cazier judiciar)"];
+  benefits=["Romanian citizenship = EU membership  --  live and work freely in all 27 EU states","Romanian passport grants visa-free access to 170+ countries","Dual citizenship is fully permitted with USA","EU citizenship for your children and future generations"];
+  resources=[
+    {name:"Arhivele Nationale ale Romaniei (ANR)  --  National Archives",url:"https://arhivelenationale.ro"},
+    {name:"FamilySearch  --  FREE Romanian records",url:"https://www.familysearch.org/en/wiki/Romania_Genealogy"},
+    {name:"Romanian Ministry of Justice  --  Cetatenie (Citizenship)",url:"https://ministerul-justitiei.ro/cetatenie"},
+    {name:"JewishGen  --  Romanian Jewish genealogy records",url:"https://www.jewishgen.org/databases/Romania"}
+  ];
+  note="ELIGIBILITY NOTE: Romanian citizenship restoration applies up to the 3rd generation (great-grandchildren). Your Romanian ancestor must have been a citizen before losing citizenship between 1940-1989.";
+}
+else if(isIsraeli){
+  title="ANCESTOR RESEARCH: ISRAEL  --  LAW OF RETURN";
+  subtitle=name?"Your Jewish/Israeli Ancestor: "+ancLine:"Jewish Heritage & Law of Return Research Guide";
+  description="Israel's Law of Return (1950, expanded 1970) grants any Jewish person  --  or their child or grandchild  --  the right to immigrate to Israel and receive citizenship upon arrival. Under the 1970 amendment, you qualify if you have at least ONE Jewish grandparent, regardless of whether you personally practice Judaism. Israeli citizenship is granted upon completing aliyah (immigration to Israel).";
+  steps=[
+    name?"GATHER PROOF OF JEWISH HERITAGE FOR "+name.toUpperCase()+": Collect synagogue membership records, Jewish birth records, Ketubot (Jewish marriage certificates), Bar/Bat Mitzvah certificates, or Jewish burial society records. Any document showing your ancestor's Jewish identity works.":"GATHER PRIMARY PROOF OF JEWISH HERITAGE: Collect synagogue membership records, Jewish birth records, Ketubot (Jewish marriage certificates), Bar/Bat Mitzvah certificates, Jewish school enrollment, or Jewish burial society (Chevra Kadisha) records.",
+    "SEARCH JEWISHGEN.ORG (FREE): The world's largest Jewish genealogy database with 30+ million records from communities worldwide. Search by surname, town, and country. Includes cemetery databases, community vital records, and Holocaust-era documents."+(town?" Search specifically for the "+town+" Jewish community records.":""),
+    "SEARCH YAD VASHEM (FREE): Israel's Holocaust memorial database at yadvashem.org includes Victim Pages (Daf Ed), pre-war community photographs, and testimony that confirms Jewish heritage and community connections."+(yr?" Search for records from before "+yr+".":""),
+    "CONTACT THE JEWISH AGENCY FOR ISRAEL (FREE SERVICE): The Jewish Agency (jewishagency.org) provides FREE guidance, aliyah processing, and support for Law of Return applicants. They verify eligibility and coordinate the immigration process at no cost.",
+    "VERIFY ELIGIBILITY UNDER 1970 AMENDMENT: Under the expanded Law of Return, you qualify if (a) you are Jewish, (b) you are the child of a Jewish person, or (c) you are the grandchild of a Jewish person. Spouses of qualifying individuals also qualify. This extends the law to mixed-heritage families.",
+    "APPLY AT ISRAELI EMBASSY OR CONSULATE: Schedule an appointment at the Israeli Embassy with your proof of Jewish heritage and connecting family documents. The Israeli Ministry of Interior reviews applications. Israeli citizenship is automatic upon completing aliyah and can be maintained while living in the USA."
+  ];
+  docs=["Proof of Jewish heritage (synagogue records, Ketubah, Bar/Bat Mitzvah certificate)","Connecting birth/marriage records from Jewish ancestor to you","Your valid US passport and US birth certificate","Medical clearance certificate","Clean criminal background check (FBI apostilled)","If converting: Official conversion certificate from recognized Jewish organization"];
+  benefits=["Israeli citizenship grants visa-free access to 160+ countries including USA ESTA-eligible","Jewish Agency provides free aliyah assistance, Hebrew ulpan, and initial settlement support","Access to Israeli national health insurance and social benefits from day one","Israeli citizenship passes automatically to your children"];
+  resources=[
+    {name:"JewishGen  --  FREE worldwide Jewish genealogy database (30M+ records)",url:"https://www.jewishgen.org"},
+    {name:"Yad Vashem  --  Holocaust memorial & genealogy records",url:"https://www.yadvashem.org"},
+    {name:"Jewish Agency for Israel  --  FREE aliyah guidance",url:"https://www.jewishagency.org/aliyah"},
+    {name:"Israeli Ministry of Interior  --  Law of Return",url:"https://www.gov.il/en/departments/ministry_of_interior"}
+  ];
+  note="IMPORTANT: Israeli citizenship is granted upon aliyah (immigration to Israel). You can maintain US citizenship simultaneously. The Jewish Agency provides completely FREE guidance throughout the process.";
 }
 else{
   title="ANCESTOR RESEARCH: "+((path.country||path.name)||"").toUpperCase();
